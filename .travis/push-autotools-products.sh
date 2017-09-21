@@ -36,6 +36,8 @@ git add -f Makefile.in aclocal.m4 configure install-sh missing
 git commit -F - <<END
 CI: Updated autotools products
 
+See: https://travis-ci.org/${TRAVIS_REPO_SLUG}/builds/${TRAVIS_BUILD_ID}
+
 [ci skip]
 END
 
