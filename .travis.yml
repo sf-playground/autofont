@@ -1,0 +1,7 @@
+---
+before_script:
+  - ./autogen.sh
+script:
+  - ./configure && make check
+after_success:
+  - .travis/push-autotools-products.sh
