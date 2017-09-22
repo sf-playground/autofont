@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
 # push-autotools-products.sh
+# Copyright (c) 2017 Source Foundry
 #
 # Ordinarily, only the Autotools sources, like `configure.ac` and `Makefile.am`
 # are stored in the repository.  However, this project is meant to be used as a
