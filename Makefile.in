@@ -13,6 +13,11 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+#
+# autofont
+# Copyright (c) 2017 Source Foundry
+#
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -137,6 +142,7 @@ DEFS = @DEFS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
+FONTMAKE = @FONTMAKE@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -155,6 +161,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PIP = @PIP@
+PYTHON = @PYTHON@
+PYTHONUSERBASE = @PYTHONUSERBASE@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -446,7 +455,7 @@ clean-am: clean-generic mostlyclean-am
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic
+distclean-am: clean-am distclean-generic distclean-local
 
 dvi: dvi-am
 
@@ -513,17 +522,26 @@ uninstall-am:
 .PHONY: all all-am am--refresh check check-am clean clean-generic \
 	cscopelist-am ctags-am dist dist-all dist-bzip2 dist-gzip \
 	dist-lzip dist-shar dist-tarZ dist-xz dist-zip distcheck \
-	distclean distclean-generic distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags-am uninstall \
-	uninstall-am
+	distclean distclean-generic distclean-local distcleancheck \
+	distdir distuninstallcheck dvi dvi-am html html-am info \
+	info-am install install-am install-data install-data-am \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags-am \
+	uninstall uninstall-am
 
+
+deps/bin/fontmake:
+	PYTHONUSERBASE=$(PYTHONUSERBASE) $(PIP) install --user fontmake
+
+# XXX: temporary, just for testing
+all: $(FONTMAKE)
+
+distclean-local:
+	-rm -rf deps
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

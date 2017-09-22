@@ -586,6 +586,10 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+PYTHON
+PIP
+FONTMAKE
+PYTHONUSERBASE
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
 AM_DEFAULT_V
@@ -658,7 +662,10 @@ enable_silent_rules
 '
       ac_precious_vars='build_alias
 host_alias
-target_alias'
+target_alias
+FONTMAKE
+PIP
+PYTHON'
 
 
 # Initialize some variables set by options.
@@ -1276,6 +1283,15 @@ Optional Features:
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
 
+Some influential environment variables:
+  FONTMAKE    the path to fontmake or 'pip' to install fontmake local to the
+              build environment
+  PIP         the path to pip
+  PYTHON      the path to python
+
+Use these variables to override the choices made by `configure' or to help
+it to find libraries and programs with nonstandard names/locations.
+
 Report bugs to <https://github.com/source-foundry/autofont/issues>.
 _ACEOF
 ac_status=$?
@@ -1702,6 +1718,7 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
 
 
 am__api_version='1.14'
@@ -2311,6 +2328,181 @@ END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
 fi
+
+# Allow the path to `fontmake` to be set from an environment variable.  When it
+# is set to the special value 'pip', configure will sub in a path which `make`
+# knows how to resolve using pip.
+if test "x$FONTMAKE" = xpip; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: fontmake will be installed by pip" >&5
+$as_echo "$as_me: fontmake will be installed by pip" >&6;}
+       FONTMAKE=deps/bin/fontmake
+       PYTHONUSERBASE=deps
+
+else
+  if test "x$FONTMAKE" = x; then :
+  FONTMAKE=fontmake
+fi
+       if test -x "$FONTMAKE"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: using fontmake '$FONTMAKE'" >&5
+$as_echo "$as_me: using fontmake '$FONTMAKE'" >&6;}
+else
+  # Extract the first word of "$FONTMAKE", so it can be a program name with args.
+set dummy $FONTMAKE; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_FONTMAKE+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $FONTMAKE in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_FONTMAKE="$FONTMAKE" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_FONTMAKE="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+FONTMAKE=$ac_cv_path_FONTMAKE
+if test -n "$FONTMAKE"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $FONTMAKE" >&5
+$as_echo "$FONTMAKE" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+       if test "x$FONTMAKE" = x; then :
+  as_fn_error $? "could not find fontmake" "$LINENO" 5
+fi
+fi
+
+
+# Allow the path to `pip` to be set from an environment variable, but only fail
+# if it's not found when `FONTMAKE=pip`.
+if test "x$PIP" = x; then :
+  PIP=pip
+fi
+if test -x "$PIP"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: using pip '$PIP'" >&5
+$as_echo "$as_me: using pip '$PIP'" >&6;}
+else
+  # Extract the first word of "$PIP", so it can be a program name with args.
+set dummy $PIP; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_PIP+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $PIP in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PIP="$PIP" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_PIP="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PIP=$ac_cv_path_PIP
+if test -n "$PIP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PIP" >&5
+$as_echo "$PIP" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test "x$PIP" = x -a "x$FONTMAKE" = xdeps/bin/fontmake; then :
+  as_fn_error $? "could not find pip" "$LINENO" 5
+fi
+
+
+# Allow the path to `python` to be set from an environment variable.
+if test "x$PYTHON" = x; then :
+  PYTHON=python
+fi
+if test -x "$PYTHON"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: using python '$PYTHON'" >&5
+$as_echo "$as_me: using python '$PYTHON'" >&6;}
+else
+  # Extract the first word of "$PYTHON", so it can be a program name with args.
+set dummy $PYTHON; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_PYTHON+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $PYTHON in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PYTHON="$PYTHON" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_PYTHON="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PYTHON=$ac_cv_path_PYTHON
+if test -n "$PYTHON"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PYTHON" >&5
+$as_echo "$PYTHON" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test "x$PYTHON" = x; then :
+  as_fn_error $? "could not find python" "$LINENO" 5
+fi
+
+
+# Do output
 ac_config_files="$ac_config_files Makefile"
 
 cat >confcache <<\_ACEOF
