@@ -18,7 +18,7 @@ AS_IF([test "x$FONTMAKE" = xpip],
        FONTMAKE=deps/bin/fontmake
        AC_SUBST([PYTHONUSERBASE], [deps])],
       [AS_IF([test "x$FONTMAKE" = x], [FONTMAKE=fontmake])
-       AS_IF([test -x "$FONTMAKE"],
+       AS_IF([AS_EXECUTABLE_P([$FONTMAKE])],
              [AC_MSG_NOTICE([using fontmake '$FONTMAKE'])],
              [AC_PATH_PROG([FONTMAKE], [$FONTMAKE])])
        AS_IF([test "x$FONTMAKE" = x],
@@ -29,7 +29,7 @@ AC_ARG_VAR([FONTMAKE], [the path to fontmake or 'pip' to install
 # Allow the path to `pip` to be set from an environment variable, but only fail
 # if it's not found when `FONTMAKE=pip`.
 AS_IF([test "x$PIP" = x], [PIP=pip])
-AS_IF([test -x "$PIP"],
+AS_IF([AS_EXECUTABLE_P([$PIP])],
       [AC_MSG_NOTICE([using pip '$PIP'])],
       [AC_PATH_PROG([PIP], [$PIP])])
 AS_IF([test "x$PIP" = x -a "x$FONTMAKE" = xdeps/bin/fontmake],
@@ -38,7 +38,7 @@ AC_ARG_VAR([PIP], [the path to pip])
 
 # Allow the path to `python` to be set from an environment variable.
 AS_IF([test "x$PYTHON" = x], [PYTHON=python])
-AS_IF([test -x "$PYTHON"],
+AS_IF([AS_EXECUTABLE_P([$PYTHON])],
       [AC_MSG_NOTICE([using python '$PYTHON'])],
       [AC_PATH_PROG([PYTHON], [$PYTHON])])
 AS_IF([test "x$PYTHON" = x],
