@@ -2342,7 +2342,7 @@ else
   if test "x$FONTMAKE" = x; then :
   FONTMAKE=fontmake
 fi
-       if test -x "$FONTMAKE"; then :
+       if as_fn_executable_p $FONTMAKE; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: using fontmake '$FONTMAKE'" >&5
 $as_echo "$as_me: using fontmake '$FONTMAKE'" >&6;}
 else
@@ -2398,7 +2398,7 @@ fi
 if test "x$PIP" = x; then :
   PIP=pip
 fi
-if test -x "$PIP"; then :
+if as_fn_executable_p $PIP; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: using pip '$PIP'" >&5
 $as_echo "$as_me: using pip '$PIP'" >&6;}
 else
@@ -2452,7 +2452,7 @@ fi
 if test "x$PYTHON" = x; then :
   PYTHON=python
 fi
-if test -x "$PYTHON"; then :
+if as_fn_executable_p $PYTHON; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: using python '$PYTHON'" >&5
 $as_echo "$as_me: using python '$PYTHON'" >&6;}
 else
