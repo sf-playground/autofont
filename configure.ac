@@ -1,8 +1,11 @@
 dnl
-dnl autofont
-dnl Copyright (c) 2017 Source Foundry
+dnl autofont -- configure.ac
+dnl Copyright (C) 2017 James T. Lee
 dnl
+dnl This software may be modified and distributed under the terms
+dnl of the MIT license.  See the LICENSE file for details.
 dnl
+
 dnl Initialize autoconf--this macro can only take static strings, except for
 dnl the version number, which can be set from a call to `m4_esyscmd`.
 AC_INIT([autofont], [0.1.0], [https://github.com/source-foundry/autofont/issues])

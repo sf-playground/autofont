@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 #
 # push-autotools-products.sh
-# Copyright (c) 2017 Source Foundry
+# Copyright (C) 2017 James T. Lee
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
 #
 # Ordinarily, only the Autotools sources, like `configure.ac` and `Makefile.am`
 # are stored in the repository.  However, this project is meant to be used as a
