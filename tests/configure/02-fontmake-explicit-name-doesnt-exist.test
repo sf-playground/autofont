@@ -1,18 +1,18 @@
 #
-# Fontmake Explicit Path Not Exists Test
+# Fontmake Explicit Name Doesn't Exist Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# When FONTMAKE='/some/path/to/nonexistent/command', configure should fail.
+# When FONTMAKE='some_non_existent_name', configure should fail.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Perform the action under test
-export FONTMAKE='/usr/bin/this_command_doesnt_exist'
+export FONTMAKE='this_command_doesnt_exist'
 configure
 
 # Read the results

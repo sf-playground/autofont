@@ -11,7 +11,7 @@
 # outputting pass/fail information.
 #
 
-if (( $# != 1 )); then
+if [[ $# != 1 ]]; then
     echo "Usage: $0 TEST_NAME" >&2
     exit 1
 fi
@@ -42,15 +42,16 @@ export RESULTS="tests/configure/results"
 # Run the test and capture the output
 echo -n "${test_name}... "
 output="$(bash ../"$test_script" 2>&1)"
+test_status="$?"
 
 # Output pass/fail based on the exit status of the test script.  If it fails,
 # also print the script output prefixed by the test name.
-if (( $? == 0 )); then
+if [[ $test_status == 0 ]]; then
     echo 'pass'
 else
     echo 'fail'
     while read line; do
         echo "${test_name}: ${line}"
     done <<< "$output"
-    exit 2
+    exit "$test_status"
 fi

@@ -13,10 +13,10 @@
 source "$HELPERS"
 
 # Establish expectations
-expected_fontmake='/bin/true'
+expected_fontmake='/bin/echo'
 
 # Perform the action under test
-export FONTMAKE='true'
+export FONTMAKE='echo'
 configure
 
 # Read the results

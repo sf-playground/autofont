@@ -5,14 +5,15 @@
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# TEST_DESCRIPTION (Describe the specification that this script test for)
+# TEST_DESCRIPTION (Describe the specification that this script tests for)
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_fontmake="$(which fontmake)"
+expected_configure_status_minimum=0
+expected_configure_status_maximum=255
 
 # Perform the action under test
 configure
@@ -21,10 +22,7 @@ configure
 source "$RESULTS"
 
 # Validate the expectations
-if [[ $expected_fontmake ]]; then
-    [[ $CONFIGURE_STATUS == 0 && $FONTMAKE == $expected_fontmake ]]
-else
-    [[ $CONFIGURE_STATUS != 0 ]] && grep 'could not find fontmake' config.log
-fi
+(( CONFIGURE_STATUS >= expected_configure_status_minimum &&
+   CONFIGURE_STATUS <= expected_configure_status_maximum ))
 
 # vi: ft=sh
