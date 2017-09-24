@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 #
 # Base Test
 # Copyright (C) 2017 James T. Lee
@@ -29,3 +28,5 @@ if [[ $expected_fontmake ]]; then
 else
     [[ $CONFIGURE_STATUS != 0 ]] && grep 'could not find fontmake' config.log
 fi
+
+# vi: ft=sh

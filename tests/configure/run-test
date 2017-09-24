@@ -17,12 +17,12 @@ if (( $# != 1 )); then
 fi
 
 test_name="$1"
-test_script="$1.sh"
+test_script="$1.test"
 
 cd "$(dirname "$0")"
 basedir="$PWD"
 
-if [[ ! -f $test_script || ! -x $test_script ]]; then
+if [[ ! -f $test_script ]]; then
     echo "Test '$test_name' not found" >&2
     exit 1
 fi
@@ -41,7 +41,7 @@ export RESULTS="tests/configure/results"
 
 # Run the test and capture the output
 echo -n "${test_name}... "
-output="$(../"$test_script" 2>&1)"
+output="$(bash ../"$test_script" 2>&1)"
 
 # Output pass/fail based on the exit status of the test script.  If it fails,
 # also print the script output prefixed by the test name.

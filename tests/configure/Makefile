@@ -1,4 +1,4 @@
-TESTS = $(sort $(patsubst %.sh,%,$(wildcard *.sh)))
+TESTS = $(sort $(patsubst %.test,%,$(wildcard *.test)))
 
 all: $(TESTS)
 
