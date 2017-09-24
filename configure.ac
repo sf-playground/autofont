@@ -55,5 +55,5 @@ AS_IF([test "x$PYTHON" = x],
 AC_ARG_VAR([PYTHON], [the path to python])
 
 # Do output
-AC_CONFIG_FILES([Makefile tests/configure/results])
+AC_CONFIG_FILES([GNUmakefile tests/configure/results])
 AC_OUTPUT

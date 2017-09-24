@@ -34,7 +34,7 @@ fi
 
 # Forcefully add the Autotools products as they would be distributed by `make
 # dist`, and which are excluded in `.gitignore`.
-git add -f Makefile.in aclocal.m4 configure install-sh missing
+git add -f GNUmakefile.in aclocal.m4 configure install-sh missing
 
 # Commit with a message that will not trigger another build.
 git commit -F - <<END
