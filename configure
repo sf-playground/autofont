@@ -2509,7 +2509,7 @@ fi
 
 
 # Do output
-ac_config_files="$ac_config_files Makefile tests/configure/results"
+ac_config_files="$ac_config_files GNUmakefile tests/configure/results"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3228,7 +3228,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile" ;;
     "tests/configure/results") CONFIG_FILES="$CONFIG_FILES tests/configure/results" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
