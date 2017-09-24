@@ -23,7 +23,9 @@ AS_IF([test "x$FONTMAKE" = xpip],
       [AS_IF([test "x$FONTMAKE" = x], [FONTMAKE=fontmake])
        AS_IF([AS_EXECUTABLE_P([$FONTMAKE])],
              [AC_MSG_NOTICE([using fontmake '$FONTMAKE'])],
-             [AC_PATH_PROG([FONTMAKE], [$FONTMAKE])])
+             [requested_fontmake="$FONTMAKE"
+              AS_UNSET([FONTMAKE])
+              AC_PATH_PROG([FONTMAKE], [$requested_fontmake])])
        AS_IF([test "x$FONTMAKE" = x],
              [AC_MSG_ERROR([could not find fontmake])])])
 AC_ARG_VAR([FONTMAKE], [the path to fontmake or 'pip' to install
@@ -34,7 +36,9 @@ AC_ARG_VAR([FONTMAKE], [the path to fontmake or 'pip' to install
 AS_IF([test "x$PIP" = x], [PIP=pip])
 AS_IF([AS_EXECUTABLE_P([$PIP])],
       [AC_MSG_NOTICE([using pip '$PIP'])],
-      [AC_PATH_PROG([PIP], [$PIP])])
+      [requested_pip="$PIP"
+       AS_UNSET([PIP])
+       AC_PATH_PROG([PIP], [$requested_pip])])
 AS_IF([test "x$PIP" = x -a "x$FONTMAKE" = xdeps/bin/fontmake],
       [AC_MSG_ERROR([could not find pip])])
 AC_ARG_VAR([PIP], [the path to pip])
@@ -43,11 +47,13 @@ AC_ARG_VAR([PIP], [the path to pip])
 AS_IF([test "x$PYTHON" = x], [PYTHON=python])
 AS_IF([AS_EXECUTABLE_P([$PYTHON])],
       [AC_MSG_NOTICE([using python '$PYTHON'])],
-      [AC_PATH_PROG([PYTHON], [$PYTHON])])
+      [requested_python="$PYTHON"
+       AS_UNSET([PYTHON])
+       AC_PATH_PROG([PYTHON], [$requested_python])])
 AS_IF([test "x$PYTHON" = x],
       [AC_MSG_ERROR([could not find python])])
 AC_ARG_VAR([PYTHON], [the path to python])
 
 # Do output
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile tests/configure/results])
 AC_OUTPUT

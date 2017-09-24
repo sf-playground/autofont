@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+#
+# run-test
+# Copyright (C) 2017 James T. Lee
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+#
+# Takes the name of a single test and runs its corresponding script in a
+# separate VPATH build environment, capturing the output and status, and
+# outputting pass/fail information.
+#
+
+if (( $# != 1 )); then
+    echo "Usage: $0 TEST_NAME" >&2
+    exit 1
+fi
+
+test_name="$1"
+test_script="$1.sh"
+
+cd "$(dirname "$0")"
+basedir="$PWD"
+
+if [[ ! -f $test_script || ! -x $test_script ]]; then
+    echo "Test '$test_name' not found" >&2
+    exit 1
+fi
+
+# Cleanup the test build environment
+trap "cd ${basedir}; rm -rf ${test_name}" EXIT
+
+# Create the test build environment
+mkdir "$test_name"
+cd "$test_name"
+
+# Export the paths to commonly sourced files so test scripts don't have to try
+# to resolve them themselves.
+export HELPERS="${basedir}/helpers"
+export RESULTS="tests/configure/results"
+
+# Run the test and capture the output
+echo -n "${test_name}... "
+output="$(../"$test_script" 2>&1)"
+
+# Output pass/fail based on the exit status of the test script.  If it fails,
+# also print the script output prefixed by the test name.
+if (( $? == 0 )); then
+    echo 'pass'
+else
+    echo 'fail'
+    while read line; do
+        echo "${test_name}: ${line}"
+    done <<< "$output"
+    exit 2
+fi
