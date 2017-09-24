@@ -2346,8 +2346,10 @@ fi
   { $as_echo "$as_me:${as_lineno-$LINENO}: using fontmake '$FONTMAKE'" >&5
 $as_echo "$as_me: using fontmake '$FONTMAKE'" >&6;}
 else
-  # Extract the first word of "$FONTMAKE", so it can be a program name with args.
-set dummy $FONTMAKE; ac_word=$2
+  requested_fontmake="$FONTMAKE"
+              { FONTMAKE=; unset FONTMAKE;}
+              # Extract the first word of "$requested_fontmake", so it can be a program name with args.
+set dummy $requested_fontmake; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if ${ac_cv_path_FONTMAKE+:} false; then :
@@ -2402,8 +2404,10 @@ if as_fn_executable_p $PIP; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: using pip '$PIP'" >&5
 $as_echo "$as_me: using pip '$PIP'" >&6;}
 else
-  # Extract the first word of "$PIP", so it can be a program name with args.
-set dummy $PIP; ac_word=$2
+  requested_pip="$PIP"
+       { PIP=; unset PIP;}
+       # Extract the first word of "$requested_pip", so it can be a program name with args.
+set dummy $requested_pip; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if ${ac_cv_path_PIP+:} false; then :
@@ -2456,8 +2460,10 @@ if as_fn_executable_p $PYTHON; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: using python '$PYTHON'" >&5
 $as_echo "$as_me: using python '$PYTHON'" >&6;}
 else
-  # Extract the first word of "$PYTHON", so it can be a program name with args.
-set dummy $PYTHON; ac_word=$2
+  requested_python="$PYTHON"
+       { PYTHON=; unset PYTHON;}
+       # Extract the first word of "$requested_python", so it can be a program name with args.
+set dummy $requested_python; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if ${ac_cv_path_PYTHON+:} false; then :
@@ -2503,7 +2509,7 @@ fi
 
 
 # Do output
-ac_config_files="$ac_config_files Makefile"
+ac_config_files="$ac_config_files Makefile tests/configure/results"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3223,6 +3229,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "tests/configure/results") CONFIG_FILES="$CONFIG_FILES tests/configure/results" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
