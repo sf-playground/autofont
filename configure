@@ -590,8 +590,9 @@ PYTHON
 PIP
 FONTMAKE
 PYTHONUSERBASE
-HAVE_FONT_SRCDIR_FALSE
-HAVE_FONT_SRCDIR_TRUE
+font_ufodir
+HAVE_FONT_UFODIR_FALSE
+HAVE_FONT_UFODIR_TRUE
 font_srcdir
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
@@ -663,6 +664,7 @@ ac_user_opts='
 enable_option_checking
 enable_silent_rules
 with_font_srcdir
+with_font_ufodirname
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1290,8 +1292,10 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-font-srcdir=DIR  build from UFO sources in DIR [`..', `../src', or
-                          `../source' relative to SRCDIR]
+  --with-font-srcdir=DIR  build from font project root at DIR [SRCDIR/..]
+  --with-font-ufodirname=DIRNAME
+                          build from UFO sources in FONT_SRCDIR/DIRNAME [`.',
+                          `src', or `source']
 
 Some influential environment variables:
   FONTMAKE    the path to fontmake or 'pip' to install fontmake local to the
@@ -2339,8 +2343,6 @@ END
   fi
 fi
 
-
-
 # When we run configure in the same directory as it lives, 'srcdir' is '.',
 # which results in ugly checking messages like:
 #   checking ./../src for UFO sources... found
@@ -2352,9 +2354,9 @@ else
 fi
 
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
-# the path to the UFO source files.  If left unspecified, search a few
-# locations above the configure script, under the assumption that autofont is
-# just a subdirectory in a font project, like:
+# the root of the font project.  If left unspecified, use the parent of the
+# directory containing the configure script, under the assumption that autofont
+# is just a subdirectory in a font project, like:
 #
 #   font_project/autofont/configure
 #   font_project/src/*.ufo
@@ -2362,53 +2364,69 @@ fi
 
 # Check whether --with-font-srcdir was given.
 if test "${with_font_srcdir+set}" = set; then :
-  withval=$with_font_srcdir; for dir in "$withval"; do
+  withval=$with_font_srcdir; font_srcdir="$withval"
+else
+  font_srcdir="${pretty_srcdir}.."
+fi
+
+font_srcdir=$font_srcdir
+
+
+
+
+# Expose a configure argument, --with-font-ufodirname, that can be used to
+# specify the name of the directory under font_srcdir that contains the UFO
+# source files.  If left unspecified, configure will search the font_srcdir
+# itself, and subdirectories 'src' and 'source' for UFO files.
+
+# Check whether --with-font-ufodirname was given.
+if test "${with_font_ufodirname+set}" = set; then :
+  withval=$with_font_ufodirname; for dir in "${font_srcdir}/${withval}"; do
             { $as_echo "$as_me:${as_lineno-$LINENO}: checking $dir for UFO sources" >&5
 $as_echo_n "checking $dir for UFO sources... " >&6; }
             if (cd -L "$dir" && ls *.ufo) > /dev/null 2>&1; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
 $as_echo "found" >&6; }
-                   font_srcdir="$dir"
+                   have_font_ufodir='true'
+                   font_ufodir="$dir"
                    break
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
 $as_echo "not found" >&6; }
+                   have_font_ufodir='false'
 fi
           done
 else
-  for dir in "${pretty_srcdir}.."                                  "${pretty_srcdir}../src"                                  "${pretty_srcdir}../source"; do
+  for dir in "$font_srcdir"                                  "${font_srcdir}/src"                                  "${font_srcdir}/source"; do
             { $as_echo "$as_me:${as_lineno-$LINENO}: checking $dir for UFO sources" >&5
 $as_echo_n "checking $dir for UFO sources... " >&6; }
             if (cd -L "$dir" && ls *.ufo) > /dev/null 2>&1; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
 $as_echo "found" >&6; }
-                   font_srcdir="$dir"
+                   have_font_ufodir='true'
+                   font_ufodir="$dir"
                    break
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
 $as_echo "not found" >&6; }
+                   have_font_ufodir='false'
 fi
           done
 fi
 
-
-if test "x$font_srcdir" != x; then :
-  have_font_srcdir='true'
-       font_srcdir=$font_srcdir
-
-else
-  have_font_srcdir='false'
-       { $as_echo "$as_me:${as_lineno-$LINENO}: no UFO sources found; fonts will not be built" >&5
+if test "x$have_font_ufodir" != xtrue; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: no UFO sources found; fonts will not be built" >&5
 $as_echo "$as_me: no UFO sources found; fonts will not be built" >&6;}
 fi
-
- if test "x$have_font_srcdir" = xtrue; then
-  HAVE_FONT_SRCDIR_TRUE=
-  HAVE_FONT_SRCDIR_FALSE='#'
+ if test "x$have_font_ufodir" = xtrue; then
+  HAVE_FONT_UFODIR_TRUE=
+  HAVE_FONT_UFODIR_FALSE='#'
 else
-  HAVE_FONT_SRCDIR_TRUE='#'
-  HAVE_FONT_SRCDIR_FALSE=
+  HAVE_FONT_UFODIR_TRUE='#'
+  HAVE_FONT_UFODIR_FALSE=
 fi
+
+font_ufodir=$font_ufodir
 
 
 # Allow the path to `fontmake` to be set from an environment variable.  When it
@@ -2471,7 +2489,7 @@ fi
 
 
 fi
-       if test "x$FONTMAKE" = x -a "x$have_font_srcdir" = xtrue; then :
+       if test "x$FONTMAKE" = x -a "x$have_font_ufodir" = xtrue; then :
   as_fn_error $? "could not find fontmake" "$LINENO" 5
 fi
 fi
@@ -2585,7 +2603,7 @@ fi
 
 
 fi
-if test "x$PYTHON" = x -a "x$have_font_srcdir" = xtrue; then :
+if test "x$PYTHON" = x -a "x$have_font_ufodir" = xtrue; then :
   as_fn_error $? "could not find python" "$LINENO" 5
 fi
 
@@ -2747,8 +2765,8 @@ $as_echo_n "checking that generated files are newer than configure... " >&6; }
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: done" >&5
 $as_echo "done" >&6; }
 
-if test -z "${HAVE_FONT_SRCDIR_TRUE}" && test -z "${HAVE_FONT_SRCDIR_FALSE}"; then
-  as_fn_error $? "conditional \"HAVE_FONT_SRCDIR\" was never defined.
+if test -z "${HAVE_FONT_UFODIR_TRUE}" && test -z "${HAVE_FONT_UFODIR_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_FONT_UFODIR\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

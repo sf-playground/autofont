@@ -187,6 +187,7 @@ docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 font_srcdir = @font_srcdir@
+font_ufodir = @font_ufodir@
 host_alias = @host_alias@
 htmldir = @htmldir@
 includedir = @includedir@
