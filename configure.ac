@@ -10,16 +10,16 @@ dnl Initialize autoconf--this macro can only take static strings, except for
 dnl the version number, which can be set from a call to `m4_esyscmd`.
 AC_INIT([autofont], [0.1.0], [https://github.com/source-foundry/autofont/issues])
 
+# When configure is run in the directory it lives in, it breaks VPATH builds
+# (including the autofont unit tests) until `make distclean` is run.  Given
+# that autofont will be mostly used as a subdirectory in a font project anyway,
+# most people will be running it from a separate directory anyway, so just
+# enforce that usage pattern.
+AS_IF([test "x$srcdir" = x.],
+      [AC_MSG_ERROR([create a build directory and run configure from there])])
+
 dnl Initialize automake as a non-GNU standard (i.e. "foreign") project
 AM_INIT_AUTOMAKE([foreign])
-
-# When we run configure in the same directory as it lives, 'srcdir' is '.',
-# which results in ugly checking messages like:
-#   checking ./../src for UFO sources... found
-# This just lets us remove that leading './'
-AS_IF([test "x$srcdir" = x.],
-      [pretty_srcdir=''],
-      [pretty_srcdir="${srcdir}/"])
 
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
 # the root of the font project.  If left unspecified, use the parent of the
@@ -33,7 +33,7 @@ AC_ARG_WITH([font-srcdir],
             [AS_HELP_STRING([--with-font-srcdir=DIR],
                             [build from font project root at DIR [SRCDIR/..]])],
             [font_srcdir="$withval"],
-            [font_srcdir="${pretty_srcdir}.."])
+            [font_srcdir="${srcdir}/.."])
 AC_SUBST([font_srcdir], [$font_srcdir])
 
 dnl Define a macro that takes a list of directories and finds the first one
