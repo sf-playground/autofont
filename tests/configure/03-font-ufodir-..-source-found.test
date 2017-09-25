@@ -1,19 +1,19 @@
 #
-# Font Source Directory ../source Found Test
+# Font UFO Directory ../source Found Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# When source files exist in the sibling 'source' directory of the directory
-# containing configure, its parent shall be set as the `font_srcdir`.
+# When UFO files exist in the sibling 'source' directory of the directory
+# containing configure, it shall be set as the `font_ufodir`.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_font_srcdir='autofont/..'
+expected_font_ufodir='autofont/../source'
 
 # Simulate known environment
 mkdir -p source/foo.ufo
@@ -25,6 +25,6 @@ configure_with_build_deps
 source "$RESULTS"
 
 # Validate the expectations
-[[ $font_srcdir == $expected_font_srcdir ]]
+[[ $font_ufodir == $expected_font_ufodir ]]
 
 # vi: ft=sh

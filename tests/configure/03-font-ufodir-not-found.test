@@ -1,13 +1,13 @@
 #
-# Font Source Directory Explicitly Specified Not Found Test
+# Font UFO Directory Not Found Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# When configure can't find UFOs in a directory specified with the
-# `--with-font-srcdir` argument, configure should set AM_CONDITIONAL
-# `HAVE_FONT_SRCDIR` to `false` and not build fonts.
+# When configure can't find UFOs in a select set of parent directories,
+# configure should set AM_CONDITIONAL `HAVE_FONT_UFODIR` to `false` and not
+# build fonts.
 #
 
 # Include a set of common test functions
@@ -17,13 +17,13 @@ source "$HELPERS"
 expected_configure_notice="no UFO sources found; fonts will not be built"
 
 # Perform the action under test
-configure_with_build_deps --with-font-srcdir=/this/doesnt/exist
+configure_with_build_deps
 
 # Read the results
 source "$RESULTS"
 
 # Validate the expectations
-[[ $HAVE_FONT_SRCDIR_TRUE == '#' && $HAVE_FONT_SRCDIR_FALSE = '' ]] &&
+[[ $HAVE_FONT_UFODIR_TRUE == '#' && $HAVE_FONT_UFODIR_FALSE = '' ]] &&
 grep "$expected_configure_notice" config.log
 
 # vi: ft=sh

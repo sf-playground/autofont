@@ -1,30 +1,27 @@
 #
-# Font Source Directory ../src Found Test
+# Font Source Directory Explicitly Specified Exists Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# When source files exist in the sibling 'src' directory of the directory
-# containing configure, its parent shall be set as the `font_srcdir`.
+# When a directory specified with the `--with-font-srcdir` configure argument
+# contains UFOs, the directory containing UFOs is set as the `font_ufodir`.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_font_srcdir='autofont/..'
-
-# Simulate known environment
-mkdir -p src/foo.ufo
+expected_font_ufodir='../../fixtures/Hack/source'
 
 # Perform the action under test
-configure_with_build_deps
+configure_with_fixtures_and_build_deps
 
 # Read the results
 source "$RESULTS"
 
 # Validate the expectations
-[[ $font_srcdir == $expected_font_srcdir ]]
+[[ $font_ufodir == $expected_font_ufodir ]]
 
 # vi: ft=sh

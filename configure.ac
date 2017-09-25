@@ -13,47 +13,59 @@ AC_INIT([autofont], [0.1.0], [https://github.com/source-foundry/autofont/issues]
 dnl Initialize automake as a non-GNU standard (i.e. "foreign") project
 AM_INIT_AUTOMAKE([foreign])
 
-dnl Define a macro that takes a directory and checks it and a few
-dnl subdirectories for *.ufo sources, and sets `font_srcdir` to the directory
-dnl if found.
-AC_DEFUN([CHECK_FONT_SRCDIR],
-         [AC_MSG_CHECKING([font srcdir $1 for UFO sources])
-          AS_IF([(cd -L "$1" && (ls *.ufo || ls src/*.ufo || ls source/*.ufo)) > /dev/null 2>&1],
-                [AC_MSG_RESULT([found])
-                 have_font_srcdir='true'
-                 font_srcdir="$1"
-                 AC_SUBST([font_srcdir], [$font_srcdir])],
-                [AC_MSG_RESULT([not found])
-                 AC_MSG_NOTICE([no UFO sources found; fonts will not be built])
-                 have_font_srcdir='false'])])
-
 # When we run configure in the same directory as it lives, 'srcdir' is '.',
 # which results in ugly checking messages like:
-#   checking font srcdir ./.. for UFO sources... found
+#   checking ./../src for UFO sources... found
 # This just lets us remove that leading './'
 AS_IF([test "x$srcdir" = x.],
       [pretty_srcdir=''],
       [pretty_srcdir="${srcdir}/"])
 
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
-# the path to root font project directory which either contains `*.ufo` files
-# directly, or contains a `src` or `source` directory that contains the `*.ufo`
-# files.  This is analagous to the autoconf `srcdir` concept.  If left
-# unspecified, use the parent directory of the directory containing the
-# configure script, under the assumption that autofont is just a subdirectory
-# in a font project, like:
+# the root of the font project.  If left unspecified, use the parent of the
+# directory containing the configure script, under the assumption that autofont
+# is just a subdirectory in a font project, like:
 #
 #   font_project/autofont/configure
 #   font_project/src/*.ufo
 #
 AC_ARG_WITH([font-srcdir],
             [AS_HELP_STRING([--with-font-srcdir=DIR],
-                            [build fonts from root project at DIR
-                             [SRCDIR/..]])],
-            [CHECK_FONT_SRCDIR([$withval])],
-            [CHECK_FONT_SRCDIR(["${pretty_srcdir}.."])])
+                            [build from font project root at DIR [SRCDIR/..]])],
+            [font_srcdir="$withval"],
+            [font_srcdir="${pretty_srcdir}.."])
+AC_SUBST([font_srcdir], [$font_srcdir])
 
-AM_CONDITIONAL([HAVE_FONT_SRCDIR], [test "x$have_font_srcdir" = xtrue])
+dnl Define a macro that takes a list of directories and finds the first one
+dnl that contains any *.ufo sources, and sets 'font_ufodir' to that directory.
+AC_DEFUN([CHECK_FONT_UFODIRS],
+         [for dir in m4_flatten([$1]); do
+            AC_MSG_CHECKING([$dir for UFO sources])
+            AS_IF([(cd -L "$dir" && ls *.ufo) > /dev/null 2>&1],
+                  [AC_MSG_RESULT([found])
+                   have_font_ufodir='true'
+                   font_ufodir="$dir"
+                   break],
+                  [AC_MSG_RESULT([not found])
+                   have_font_ufodir='false'])
+          done])
+
+# Expose a configure argument, --with-font-ufodirname, that can be used to
+# specify the name of the directory under font_srcdir that contains the UFO
+# source files.  If left unspecified, configure will search the font_srcdir
+# itself, and subdirectories 'src' and 'source' for UFO files.
+AC_ARG_WITH([font-ufodirname],
+            [AS_HELP_STRING([--with-font-ufodirname=DIRNAME],
+                            [build from UFO sources in FONT_SRCDIR/DIRNAME
+                             [`.', `src', or `source']])],
+            [CHECK_FONT_UFODIRS(["${font_srcdir}/${withval}"])],
+            [CHECK_FONT_UFODIRS(["$font_srcdir"
+                                 "${font_srcdir}/src"
+                                 "${font_srcdir}/source"])])
+AS_IF([test "x$have_font_ufodir" != xtrue],
+      [AC_MSG_NOTICE([no UFO sources found; fonts will not be built])])
+AM_CONDITIONAL([HAVE_FONT_UFODIR], [test "x$have_font_ufodir" = xtrue])
+AC_SUBST([font_ufodir], [$font_ufodir])
 
 # Allow the path to `fontmake` to be set from an environment variable.  When it
 # is set to the special value 'pip', configure will sub in a path which `make`
@@ -68,7 +80,7 @@ AS_IF([test "x$FONTMAKE" = xpip],
              [requested_fontmake="$FONTMAKE"
               AS_UNSET([FONTMAKE])
               AC_PATH_PROG([FONTMAKE], [$requested_fontmake])])
-       AS_IF([test "x$FONTMAKE" = x -a "x$have_font_srcdir" = xtrue],
+       AS_IF([test "x$FONTMAKE" = x -a "x$have_font_ufodir" = xtrue],
              [AC_MSG_ERROR([could not find fontmake])])])
 AC_ARG_VAR([FONTMAKE], [the path to fontmake or 'pip' to install
                         fontmake local to the build environment])
@@ -92,7 +104,7 @@ AS_IF([AS_EXECUTABLE_P([$PYTHON])],
       [requested_python="$PYTHON"
        AS_UNSET([PYTHON])
        AC_PATH_PROG([PYTHON], [$requested_python])])
-AS_IF([test "x$PYTHON" = x -a "x$have_font_srcdir" = xtrue],
+AS_IF([test "x$PYTHON" = x -a "x$have_font_ufodir" = xtrue],
       [AC_MSG_ERROR([could not find python])])
 AC_ARG_VAR([PYTHON], [the path to python])
 
