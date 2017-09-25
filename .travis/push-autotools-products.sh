@@ -27,8 +27,8 @@ if [[ $TRAVIS_PULL_REQUEST != 'false' || $TRAVIS_TAG != '' ]]; then
     exit 0
 fi
 
-# Forks will likely not have `GH_TOKEN` set, so don't even attempt to push.
-if [[ $GH_TOKEN == '' ]]; then
+# Forks will likely not have `GITHUB_TOKEN` set, so don't even attempt to push.
+if [[ $GITHUB_TOKEN == '' ]]; then
     exit 0
 fi
 
@@ -51,6 +51,6 @@ END
 # next build triggered by the commit that caused it to be a non-fast-forward
 # update in the first place.
 #
-# `GH_TOKEN` is a token generated at https://github.com/settings/tokens with
+# `GITHUB_TOKEN` is a token generated at https://github.com/settings/tokens with
 # 'public_repo' access.
-git push "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git" "HEAD:${TRAVIS_BRANCH}"
+git push "https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git" "HEAD:${TRAVIS_BRANCH}"
