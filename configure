@@ -1735,6 +1735,15 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+# When configure is run in the directory it lives in, it breaks VPATH builds
+# (including the autofont unit tests) until `make distclean` is run.  Given
+# that autofont will be mostly used as a subdirectory in a font project anyway,
+# most people will be running it from a separate directory anyway, so just
+# enforce that usage pattern.
+if test "x$srcdir" = x.; then :
+  as_fn_error $? "create a build directory and run configure from there" "$LINENO" 5
+fi
+
 am__api_version='1.14'
 
 ac_aux_dir=
@@ -2343,16 +2352,6 @@ END
   fi
 fi
 
-# When we run configure in the same directory as it lives, 'srcdir' is '.',
-# which results in ugly checking messages like:
-#   checking ./../src for UFO sources... found
-# This just lets us remove that leading './'
-if test "x$srcdir" = x.; then :
-  pretty_srcdir=''
-else
-  pretty_srcdir="${srcdir}/"
-fi
-
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
 # the root of the font project.  If left unspecified, use the parent of the
 # directory containing the configure script, under the assumption that autofont
@@ -2366,7 +2365,7 @@ fi
 if test "${with_font_srcdir+set}" = set; then :
   withval=$with_font_srcdir; font_srcdir="$withval"
 else
-  font_srcdir="${pretty_srcdir}.."
+  font_srcdir="${srcdir}/.."
 fi
 
 font_srcdir=$font_srcdir
