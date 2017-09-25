@@ -6,17 +6,17 @@
 # of the MIT license.  See the LICENSE file for details.
 #
 # When source files exist in the sibling 'src' directory of the directory
-# containing configure, it shall be set as the `font_srcdir`.
+# containing configure, its parent shall be set as the `font_srcdir`.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_font_srcdir='autofont/../src'
+expected_font_srcdir='autofont/..'
 
 # Simulate known environment
-mkdir -p src/foo.ufo source/foo.ufo
+mkdir -p src/foo.ufo
 
 # Perform the action under test
 configure_with_build_deps

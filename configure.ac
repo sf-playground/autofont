@@ -13,49 +13,45 @@ AC_INIT([autofont], [0.1.0], [https://github.com/source-foundry/autofont/issues]
 dnl Initialize automake as a non-GNU standard (i.e. "foreign") project
 AM_INIT_AUTOMAKE([foreign])
 
-dnl Define a macro that takes a list of directories and finds the first one
-dnl that contains any *.ufo sources, and sets 'font_srcdir' to that directory.
-AC_DEFUN([CHECK_FONT_SRCDIRS],
-         [for dir in m4_flatten([$1]); do
-            AC_MSG_CHECKING([$dir for UFO sources])
-            AS_IF([(cd -L "$dir" && ls *.ufo) > /dev/null 2>&1],
-                  [AC_MSG_RESULT([found])
-                   font_srcdir="$dir"
-                   break],
-                  [AC_MSG_RESULT([not found])])
-          done])
+dnl Define a macro that takes a directory and checks it and a few
+dnl subdirectories for *.ufo sources, and sets `font_srcdir` to the directory
+dnl if found.
+AC_DEFUN([CHECK_FONT_SRCDIR],
+         [AC_MSG_CHECKING([font srcdir $1 for UFO sources])
+          AS_IF([(cd -L "$1" && (ls *.ufo || ls src/*.ufo || ls source/*.ufo)) > /dev/null 2>&1],
+                [AC_MSG_RESULT([found])
+                 have_font_srcdir='true'
+                 font_srcdir="$1"
+                 AC_SUBST([font_srcdir], [$font_srcdir])],
+                [AC_MSG_RESULT([not found])
+                 AC_MSG_NOTICE([no UFO sources found; fonts will not be built])
+                 have_font_srcdir='false'])])
 
 # When we run configure in the same directory as it lives, 'srcdir' is '.',
 # which results in ugly checking messages like:
-#   checking ./../src for UFO sources... found
+#   checking font srcdir ./.. for UFO sources... found
 # This just lets us remove that leading './'
 AS_IF([test "x$srcdir" = x.],
       [pretty_srcdir=''],
       [pretty_srcdir="${srcdir}/"])
 
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
-# the path to the UFO source files.  If left unspecified, search a few
-# locations above the configure script, under the assumption that autofont is
-# just a subdirectory in a font project, like:
+# the path to root font project directory which either contains `*.ufo` files
+# directly, or contains a `src` or `source` directory that contains the `*.ufo`
+# files.  This is analagous to the autoconf `srcdir` concept.  If left
+# unspecified, use the parent directory of the directory containing the
+# configure script, under the assumption that autofont is just a subdirectory
+# in a font project, like:
 #
 #   font_project/autofont/configure
 #   font_project/src/*.ufo
 #
 AC_ARG_WITH([font-srcdir],
             [AS_HELP_STRING([--with-font-srcdir=DIR],
-                            [build from UFO sources in DIR
-                             [`..', `../src', or `../source'
-                             relative to SRCDIR]])],
-            [CHECK_FONT_SRCDIRS(["$withval"])],
-            [CHECK_FONT_SRCDIRS(["${pretty_srcdir}.."
-                                 "${pretty_srcdir}../src"
-                                 "${pretty_srcdir}../source"])])
-
-AS_IF([test "x$font_srcdir" != x],
-      [have_font_srcdir='true'
-       AC_SUBST([font_srcdir], [$font_srcdir])],
-      [have_font_srcdir='false'
-       AC_MSG_NOTICE([no UFO sources found; fonts will not be built])])
+                            [build fonts from root project at DIR
+                             [SRCDIR/..]])],
+            [CHECK_FONT_SRCDIR([$withval])],
+            [CHECK_FONT_SRCDIR(["${pretty_srcdir}.."])])
 
 AM_CONDITIONAL([HAVE_FONT_SRCDIR], [test "x$have_font_srcdir" = xtrue])
 

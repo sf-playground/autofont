@@ -24,12 +24,12 @@ configure_with_build_deps() {
 }
 
 configure_with_fixtures() {
-    configure --with-font-srcdir=../../fixtures/Hack/source "$@"
+    configure --with-font-srcdir=../../fixtures/Hack "$@"
 }
 
 configure_with_fixtures_and_build_deps() {
     fake_build_deps
-    configure --with-font-srcdir=../../fixtures/Hack/source "$@"
+    configure --with-font-srcdir=../../fixtures/Hack "$@"
 }
 
 fake_build_deps() {

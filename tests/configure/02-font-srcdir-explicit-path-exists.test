@@ -13,7 +13,7 @@
 source "$HELPERS"
 
 # Establish expectations
-expected_font_srcdir='../../fixtures/Hack/source'
+expected_font_srcdir='../../fixtures/Hack'
 
 # Perform the action under test
 configure_with_fixtures_and_build_deps

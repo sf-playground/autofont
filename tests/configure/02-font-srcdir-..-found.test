@@ -16,7 +16,7 @@ source "$HELPERS"
 expected_font_srcdir='autofont/..'
 
 # Simulate known environment
-mkdir -p foo.ufo src/foo.ufo source/foo.ufo
+mkdir foo.ufo
 
 # Perform the action under test
 configure_with_build_deps
