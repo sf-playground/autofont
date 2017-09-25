@@ -21,6 +21,15 @@ AS_IF([test "x$srcdir" = x.],
 dnl Initialize automake as a non-GNU standard (i.e. "foreign") project
 AM_INIT_AUTOMAKE([foreign])
 
+dnl Disable maintainer mode by default.
+dnl Maintainer mode is a setting which triggers autoconf/automake rebuilds
+dnl whenever the configure.ac file is newer than configure or Makefile.am is
+dnl newer than Makefile.in.  Because autofont stores everything in Git, this
+dnl mode can have trouble resolving the timestamps properly, triggering
+dnl spurious rebuilds.
+dnl See: https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html
+AM_MAINTAINER_MODE
+
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
 # the root of the font project.  If left unspecified, use the parent of the
 # directory containing the configure script, under the assumption that autofont
