@@ -51,10 +51,13 @@ AC_ARG_WITH([font-srcdir],
                                  "${pretty_srcdir}../src"
                                  "${pretty_srcdir}../source"])])
 
-# Fail if no UFO sources are found.
 AS_IF([test "x$font_srcdir" != x],
-      [AC_SUBST([font_srcdir], [$font_srcdir])],
-      [AC_MSG_ERROR([could not find any UFO sources])])
+      [have_font_srcdir='true'
+       AC_SUBST([font_srcdir], [$font_srcdir])],
+      [have_font_srcdir='false'
+       AC_MSG_NOTICE([no UFO sources found; fonts will not be built])])
+
+AM_CONDITIONAL([HAVE_FONT_SRCDIR], [test "x$have_font_srcdir" = xtrue])
 
 # Allow the path to `fontmake` to be set from an environment variable.  When it
 # is set to the special value 'pip', configure will sub in a path which `make`
@@ -69,7 +72,7 @@ AS_IF([test "x$FONTMAKE" = xpip],
              [requested_fontmake="$FONTMAKE"
               AS_UNSET([FONTMAKE])
               AC_PATH_PROG([FONTMAKE], [$requested_fontmake])])
-       AS_IF([test "x$FONTMAKE" = x],
+       AS_IF([test "x$FONTMAKE" = x -a "x$have_font_srcdir" = xtrue],
              [AC_MSG_ERROR([could not find fontmake])])])
 AC_ARG_VAR([FONTMAKE], [the path to fontmake or 'pip' to install
                         fontmake local to the build environment])
@@ -93,7 +96,7 @@ AS_IF([AS_EXECUTABLE_P([$PYTHON])],
       [requested_python="$PYTHON"
        AS_UNSET([PYTHON])
        AC_PATH_PROG([PYTHON], [$requested_python])])
-AS_IF([test "x$PYTHON" = x],
+AS_IF([test "x$PYTHON" = x -a "x$have_font_srcdir" = xtrue],
       [AC_MSG_ERROR([could not find python])])
 AC_ARG_VAR([PYTHON], [the path to python])
 

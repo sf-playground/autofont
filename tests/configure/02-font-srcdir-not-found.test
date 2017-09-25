@@ -6,14 +6,15 @@
 # of the MIT license.  See the LICENSE file for details.
 #
 # When configure can't find UFOs in a select set of parent directories,
-# configure should fail.
+# configure should set AM_CONDITIONAL `HAVE_FONT_SRCDIR` to `false` and not
+# build fonts.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_configure_error="could not find any UFO sources"
+expected_configure_notice="no UFO sources found; fonts will not be built"
 
 # Perform the action under test
 configure_with_build_deps
@@ -22,6 +23,7 @@ configure_with_build_deps
 source "$RESULTS"
 
 # Validate the expectations
-[[ $CONFIGURE_STATUS != 0 ]] && grep "could not find any UFO sources" config.log
+[[ $HAVE_FONT_SRCDIR_TRUE == '#' && $HAVE_FONT_SRCDIR_FALSE = '' ]] &&
+grep "$expected_configure_notice" config.log
 
 # vi: ft=sh
