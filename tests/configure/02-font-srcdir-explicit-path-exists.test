@@ -1,20 +1,19 @@
 #
-# Base Test w/ Known Environment
+# Font Source Directory Explicitly Specified Exists Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# The configure script should run without environment variables or command line
-# arguments and run to completion when all of the requirements are available.
+# When a directory specified with the `--with-font-srcdir` configure argument
+# contains UFOs, it is set as the `font_srcdir`.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_fontmake="bin/fontmake"
-expected_python="bin/python"
+expected_font_srcdir='../../fixtures/Hack/source'
 
 # Perform the action under test
 configure_with_fixtures_and_build_deps
@@ -23,8 +22,6 @@ configure_with_fixtures_and_build_deps
 source "$RESULTS"
 
 # Validate the expectations
-[[ $CONFIGURE_STATUS == 0 &&
-   $FONTMAKE == $expected_fontmake &&
-   $PYTHON == $expected_python ]]
+[[ $font_srcdir == $expected_font_srcdir ]]
 
 # vi: ft=sh

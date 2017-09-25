@@ -1,23 +1,24 @@
 #
-# Fontmake Explicit Name Exists Test
+# Fontmake from pip and pip Exists Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# When FONTMAKE='some_existent_command_name', configure should find it in the
-# PATH and set the FONTMAKE variable to the full path name.
+# When FONTMAKE='pip', configure should check that pip exists.  If it does,
+# then FONTMAKE is re-set to a path that make knows how to resolve with pip.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_fontmake='/bin/echo'
+expected_fontmake='deps/bin/fontmake'
 
 # Perform the action under test
-export FONTMAKE='echo'
-configure
+export FONTMAKE='pip'
+export PIP='echo'
+configure_with_fixtures
 
 # Read the results
 source "$RESULTS"

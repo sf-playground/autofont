@@ -13,6 +13,49 @@ AC_INIT([autofont], [0.1.0], [https://github.com/source-foundry/autofont/issues]
 dnl Initialize automake as a non-GNU standard (i.e. "foreign") project
 AM_INIT_AUTOMAKE([foreign])
 
+dnl Define a macro that takes a list of directories and finds the first one
+dnl that contains any *.ufo sources, and sets 'font_srcdir' to that directory.
+AC_DEFUN([CHECK_FONT_SRCDIRS],
+         [for dir in m4_flatten([$1]); do
+            AC_MSG_CHECKING([$dir for UFO sources])
+            AS_IF([(cd -L "$dir" && ls *.ufo) > /dev/null 2>&1],
+                  [AC_MSG_RESULT([found])
+                   font_srcdir="$dir"
+                   break],
+                  [AC_MSG_RESULT([not found])])
+          done])
+
+# When we run configure in the same directory as it lives, 'srcdir' is '.',
+# which results in ugly checking messages like:
+#   checking ./../src for UFO sources... found
+# This just lets us remove that leading './'
+AS_IF([test "x$srcdir" = x.],
+      [pretty_srcdir=''],
+      [pretty_srcdir="${srcdir}/"])
+
+# Expose a configure argument, --with-font-srcdir, that can be used to specify
+# the path to the UFO source files.  If left unspecified, search a few
+# locations above the configure script, under the assumption that autofont is
+# just a subdirectory in a font project, like:
+#
+#   font_project/autofont/configure
+#   font_project/src/*.ufo
+#
+AC_ARG_WITH([font-srcdir],
+            [AS_HELP_STRING([--with-font-srcdir=DIR],
+                            [build from UFO sources in DIR
+                             [`..', `../src', or `../source'
+                             relative to SRCDIR]])],
+            [CHECK_FONT_SRCDIRS(["$withval"])],
+            [CHECK_FONT_SRCDIRS(["${pretty_srcdir}.."
+                                 "${pretty_srcdir}../src"
+                                 "${pretty_srcdir}../source"])])
+
+# Fail if no UFO sources are found.
+AS_IF([test "x$font_srcdir" != x],
+      [AC_SUBST([font_srcdir], [$font_srcdir])],
+      [AC_MSG_ERROR([could not find any UFO sources])])
+
 # Allow the path to `fontmake` to be set from an environment variable.  When it
 # is set to the special value 'pip', configure will sub in a path which `make`
 # knows how to resolve using pip.

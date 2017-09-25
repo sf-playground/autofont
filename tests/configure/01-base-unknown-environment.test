@@ -17,7 +17,7 @@ source "$HELPERS"
 expected_fontmake="$(which fontmake)"
 
 # Perform the action under test
-configure
+configure_with_fixtures
 
 # Read the results
 source "$RESULTS"

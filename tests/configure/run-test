@@ -33,6 +33,7 @@ trap "cd ${basedir}; rm -rf ${test_name}" EXIT
 # Create the test build environment
 mkdir "$test_name"
 cd "$test_name"
+ln -s ../../.. autofont
 
 # Export the paths to commonly sourced files so test scripts don't have to try
 # to resolve them themselves.

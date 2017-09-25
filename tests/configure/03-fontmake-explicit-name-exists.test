@@ -1,28 +1,28 @@
 #
-# TEST_NAME
-# Copyright (C) YEAR YOUR_NAME
+# Fontmake Explicit Name Exists Test
+# Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# TEST_DESCRIPTION (Describe the specification that this script tests for)
+# When FONTMAKE='some_existent_command_name', configure should find it in the
+# PATH and set the FONTMAKE variable to the full path name.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_configure_status_minimum=0
-expected_configure_status_maximum=255
+expected_fontmake='/bin/echo'
 
 # Perform the action under test
+export FONTMAKE='echo'
 configure_with_fixtures
 
 # Read the results
 source "$RESULTS"
 
 # Validate the expectations
-(( CONFIGURE_STATUS >= expected_configure_status_minimum &&
-   CONFIGURE_STATUS <= expected_configure_status_maximum ))
+[[ $FONTMAKE == $expected_fontmake ]]
 
 # vi: ft=sh

@@ -1,28 +1,27 @@
 #
-# Fontmake Explicit Path Exists Test
+# Font Source Directory Not Found Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# When FONTMAKE='/some/path/to/existent/command', configure should see that it
-# exists and continue.
+# When configure can't find UFOs in a select set of parent directories,
+# configure should fail.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_fontmake='/bin/echo'
+expected_configure_error="could not find any UFO sources"
 
 # Perform the action under test
-export FONTMAKE='/bin/echo'
-configure
+configure_with_build_deps
 
 # Read the results
 source "$RESULTS"
 
 # Validate the expectations
-[[ $FONTMAKE == $expected_fontmake ]]
+[[ $CONFIGURE_STATUS != 0 ]] && grep "could not find any UFO sources" config.log
 
 # vi: ft=sh

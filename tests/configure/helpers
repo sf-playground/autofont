@@ -11,11 +11,32 @@
 #
 
 configure() {
-    ../../../configure "$@"
+    autofont/configure "$@"
     configure_status="$?"
     results_dir="$(dirname "$RESULTS")"
     [[ -d $results_dir ]] || mkdir -p "$results_dir"
     echo "CONFIGURE_STATUS='$configure_status'" >> "$RESULTS"
+}
+
+configure_with_build_deps() {
+    fake_build_deps
+    configure "$@"
+}
+
+configure_with_fixtures() {
+    configure --with-font-srcdir=../../fixtures/Hack/source "$@"
+}
+
+configure_with_fixtures_and_build_deps() {
+    fake_build_deps
+    configure --with-font-srcdir=../../fixtures/Hack/source "$@"
+}
+
+fake_build_deps() {
+    mkdir bin
+    touch bin/fontmake bin/python
+    chmod +x bin/fontmake bin/python
+    export PATH="bin:${PATH}"
 }
 
 # vi: ft=sh

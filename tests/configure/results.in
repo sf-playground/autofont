@@ -1,3 +1,4 @@
+font_srcdir='@font_srcdir@'
 FONTMAKE='@FONTMAKE@'
 PIP='@PIP@'
 PYTHON='@PYTHON@'

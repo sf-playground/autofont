@@ -1,6 +1,12 @@
 all: configure
 
-configure:
+configure: fixtures
 	$(MAKE) -C configure
 
-.PHONY: configure
+fixtures:
+	$(MAKE) -C fixtures
+
+distclean:
+	$(MAKE) -C fixtures distclean
+
+.PHONY: configure fixtures distclean
