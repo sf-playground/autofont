@@ -1,13 +1,13 @@
 #
-# Font UFO Directory Explicitly Specified Not Found Test
+# Font Source Directory Without UFOs Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# When configure can't find UFOs in a directory specified with the
-# `--with-font-ufodirname` argument, configure should set AM_CONDITIONAL
-# `HAVE_FONT_UFODIR` to `false` and not build fonts.
+# When a directory specified with the `--with-font-srcdir` configure argument
+# does not contain UFOs, the HAVE_FONT_UFODIR automake conditional is set to
+# false.
 #
 
 # Include a set of common test functions
