@@ -667,6 +667,7 @@ ac_user_opts='
 enable_option_checking
 enable_silent_rules
 enable_maintainer_mode
+enable_test_results
 with_font_srcdir
 with_font_ufodirname
 '
@@ -1296,6 +1297,7 @@ Optional Features:
                           enable make rules and dependencies not useful (and
                           sometimes confusing) to the casual installer
 
+
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
@@ -1751,7 +1753,7 @@ if test "x$srcdir" = x.; then :
   as_fn_error $? "create a build directory and run configure from there" "$LINENO" 5
 fi
 
-am__api_version='1.14'
+am__api_version='1.15'
 
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
@@ -1952,8 +1954,8 @@ test "$program_suffix" != NONE &&
 ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
 
-# expand $ac_aux_dir to an absolute path
-am_aux_dir=`cd $ac_aux_dir && pwd`
+# Expand $ac_aux_dir to an absolute path.
+am_aux_dir=`cd "$ac_aux_dir" && pwd`
 
 if test x"${MISSING+set}" != xset; then
   case $am_aux_dir in
@@ -1972,7 +1974,7 @@ else
 $as_echo "$as_me: WARNING: 'missing' script is too old or missing" >&2;}
 fi
 
-if test x"${install_sh}" != xset; then
+if test x"${install_sh+set}" != xset; then
   case $am_aux_dir in
   *\ * | *\	*)
     install_sh="\${SHELL} '$am_aux_dir/install-sh'" ;;
@@ -2300,8 +2302,8 @@ MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
 # <http://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
 mkdir_p='$(MKDIR_P)'
 
-# We need awk for the "check" target.  The system "awk" is bad on
-# some platforms.
+# We need awk for the "check" target (and possibly the TAP driver).  The
+# system "awk" is bad on some platforms.
 # Always define AMTAR for backward compatibility.  Yes, it's still used
 # in the wild :-(  We should find a proper way to deprecate it ...
 AMTAR='$${TAR-tar}'
@@ -2360,6 +2362,7 @@ END
 fi
 
 
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
     # Check whether --enable-maintainer-mode was given.
@@ -2381,6 +2384,20 @@ fi
 
   MAINT=$MAINTAINER_MODE_TRUE
 
+
+
+# Add hidden `--enable-test-results` argument to turn on results output for the
+# configure unit tests.
+# Check whether --enable-test-results was given.
+if test "${enable_test_results+set}" = set; then :
+  enableval=$enable_test_results; if test "x$enableval" = xyes; then :
+  test_results='tests/configure/results'
+else
+  test_results=''
+fi
+else
+  test_results=''
+fi
 
 
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
@@ -2639,7 +2656,7 @@ fi
 
 
 # Do output
-ac_config_files="$ac_config_files GNUmakefile tests/configure/results"
+ac_config_files="$ac_config_files GNUmakefile $test_results"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3367,7 +3384,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile" ;;
-    "tests/configure/results") CONFIG_FILES="$CONFIG_FILES tests/configure/results" ;;
+    "$test_results") CONFIG_FILES="$CONFIG_FILES $test_results" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

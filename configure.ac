@@ -30,6 +30,14 @@ dnl spurious rebuilds.
 dnl See: https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html
 AM_MAINTAINER_MODE
 
+# Add hidden `--enable-test-results` argument to turn on results output for the
+# configure unit tests.
+AC_ARG_ENABLE([test-results], [],
+              [AS_IF([test "x$enableval" = xyes],
+                     [test_results='tests/configure/results'],
+                     [test_results=''])],
+              [test_results=''])
+
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
 # the root of the font project.  If left unspecified, use the parent of the
 # directory containing the configure script, under the assumption that autofont
@@ -118,5 +126,5 @@ AS_IF([test "x$PYTHON" = x -a "x$have_font_ufodir" = xtrue],
 AC_ARG_VAR([PYTHON], [the path to python])
 
 # Do output
-AC_CONFIG_FILES([GNUmakefile tests/configure/results])
+AC_CONFIG_FILES([GNUmakefile $test_results])
 AC_OUTPUT
