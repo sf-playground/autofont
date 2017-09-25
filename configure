@@ -590,6 +590,8 @@ PYTHON
 PIP
 FONTMAKE
 PYTHONUSERBASE
+HAVE_FONT_SRCDIR_FALSE
+HAVE_FONT_SRCDIR_TRUE
 font_srcdir
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
@@ -2390,13 +2392,24 @@ fi
 fi
 
 
-# Fail if no UFO sources are found.
 if test "x$font_srcdir" != x; then :
-  font_srcdir=$font_srcdir
+  have_font_srcdir='true'
+       font_srcdir=$font_srcdir
 
 else
-  as_fn_error $? "could not find any UFO sources" "$LINENO" 5
+  have_font_srcdir='false'
+       { $as_echo "$as_me:${as_lineno-$LINENO}: no UFO sources found; fonts will not be built" >&5
+$as_echo "$as_me: no UFO sources found; fonts will not be built" >&6;}
 fi
+
+ if test "x$have_font_srcdir" = xtrue; then
+  HAVE_FONT_SRCDIR_TRUE=
+  HAVE_FONT_SRCDIR_FALSE='#'
+else
+  HAVE_FONT_SRCDIR_TRUE='#'
+  HAVE_FONT_SRCDIR_FALSE=
+fi
+
 
 # Allow the path to `fontmake` to be set from an environment variable.  When it
 # is set to the special value 'pip', configure will sub in a path which `make`
@@ -2458,7 +2471,7 @@ fi
 
 
 fi
-       if test "x$FONTMAKE" = x; then :
+       if test "x$FONTMAKE" = x -a "x$have_font_srcdir" = xtrue; then :
   as_fn_error $? "could not find fontmake" "$LINENO" 5
 fi
 fi
@@ -2572,7 +2585,7 @@ fi
 
 
 fi
-if test "x$PYTHON" = x; then :
+if test "x$PYTHON" = x -a "x$have_font_srcdir" = xtrue; then :
   as_fn_error $? "could not find python" "$LINENO" 5
 fi
 
@@ -2734,6 +2747,10 @@ $as_echo_n "checking that generated files are newer than configure... " >&6; }
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: done" >&5
 $as_echo "done" >&6; }
 
+if test -z "${HAVE_FONT_SRCDIR_TRUE}" && test -z "${HAVE_FONT_SRCDIR_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_FONT_SRCDIR\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0
