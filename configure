@@ -590,6 +590,7 @@ PYTHON
 PIP
 FONTMAKE
 PYTHONUSERBASE
+font_srcdir
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
 AM_DEFAULT_V
@@ -659,6 +660,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_silent_rules
+with_font_srcdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1282,6 +1284,12 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-font-srcdir=DIR  build from UFO sources in DIR [`..', `../src', or
+                          `../source' relative to SRCDIR]
 
 Some influential environment variables:
   FONTMAKE    the path to fontmake or 'pip' to install fontmake local to the
@@ -2327,6 +2335,67 @@ to "yes", and re-run configure.
 END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
+fi
+
+
+
+# When we run configure in the same directory as it lives, 'srcdir' is '.',
+# which results in ugly checking messages like:
+#   checking ./../src for UFO sources... found
+# This just lets us remove that leading './'
+if test "x$srcdir" = x.; then :
+  pretty_srcdir=''
+else
+  pretty_srcdir="${srcdir}/"
+fi
+
+# Expose a configure argument, --with-font-srcdir, that can be used to specify
+# the path to the UFO source files.  If left unspecified, search a few
+# locations above the configure script, under the assumption that autofont is
+# just a subdirectory in a font project, like:
+#
+#   font_project/autofont/configure
+#   font_project/src/*.ufo
+#
+
+# Check whether --with-font-srcdir was given.
+if test "${with_font_srcdir+set}" = set; then :
+  withval=$with_font_srcdir; for dir in "$withval"; do
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking $dir for UFO sources" >&5
+$as_echo_n "checking $dir for UFO sources... " >&6; }
+            if (cd -L "$dir" && ls *.ufo) > /dev/null 2>&1; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+$as_echo "found" >&6; }
+                   font_srcdir="$dir"
+                   break
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
+fi
+          done
+else
+  for dir in "${pretty_srcdir}.."                                  "${pretty_srcdir}../src"                                  "${pretty_srcdir}../source"; do
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking $dir for UFO sources" >&5
+$as_echo_n "checking $dir for UFO sources... " >&6; }
+            if (cd -L "$dir" && ls *.ufo) > /dev/null 2>&1; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+$as_echo "found" >&6; }
+                   font_srcdir="$dir"
+                   break
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
+fi
+          done
+fi
+
+
+# Fail if no UFO sources are found.
+if test "x$font_srcdir" != x; then :
+  font_srcdir=$font_srcdir
+
+else
+  as_fn_error $? "could not find any UFO sources" "$LINENO" 5
 fi
 
 # Allow the path to `fontmake` to be set from an environment variable.  When it

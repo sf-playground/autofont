@@ -186,6 +186,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+font_srcdir = @font_srcdir@
 host_alias = @host_alias@
 htmldir = @htmldir@
 includedir = @includedir@
