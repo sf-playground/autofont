@@ -2390,7 +2390,7 @@ fi
 # Check whether --enable-test-results was given.
 if test "${enable_test_results+set}" = set; then :
   enableval=$enable_test_results; if test "x$enableval" = xyes; then :
-  test_results='tests/configure/results'
+  test_results='test/configure/results'
 else
   test_results=''
 fi
