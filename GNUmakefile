@@ -13,6 +13,6 @@
 all:
 
 test:
-	$(MAKE) -C tests
+	$(MAKE) -C test
 
 .PHONY: test

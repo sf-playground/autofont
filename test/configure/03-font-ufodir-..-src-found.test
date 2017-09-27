@@ -1,22 +1,25 @@
 #
-# Font Source Directory With UFOs Test
+# autofont -- Font UFO Directory ../src Found Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# When a directory specified with the `--with-font-srcdir` configure argument
-# contains UFOs, the directory containing UFOs is set as the `font_ufodir`.
+# When UFO files exist in the sibling 'src' directory of the directory
+# containing configure, it shall be set as the `font_ufodir`.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_font_ufodir='../../fixtures/Hack/source'
+expected_font_ufodir='autofont/../src'
+
+# Simulate known environment
+mkdir -p src/foo.ufo source/foo.ufo
 
 # Perform the action under test
-configure_with_fixtures_and_build_deps
+configure_with_build_deps
 
 # Read the results
 source "$RESULTS"

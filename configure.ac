@@ -34,7 +34,7 @@ AM_MAINTAINER_MODE
 # configure unit tests.
 AC_ARG_ENABLE([test-results], [],
               [AS_IF([test "x$enableval" = xyes],
-                     [test_results='tests/configure/results'],
+                     [test_results='test/configure/results'],
                      [test_results=''])],
               [test_results=''])
 

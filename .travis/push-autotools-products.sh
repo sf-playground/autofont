@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# push-autotools-products.sh
+# autofont -- push-autotools-products.sh
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms

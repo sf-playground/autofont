@@ -15,7 +15,7 @@ all: $(FONTMAKE)
 distclean-local:
 	-rm -rf deps
 
-EXTRA_DIST = GNUmakefile LICENSE README.md tests
+EXTRA_DIST = GNUmakefile LICENSE README.md test
 
 dist-hook:
-	$(MAKE) -C $(distdir)/tests distclean
+	$(MAKE) -C $(distdir)/test distclean
