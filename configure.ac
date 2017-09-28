@@ -6,6 +6,9 @@ dnl This software may be modified and distributed under the terms
 dnl of the MIT license.  See the LICENSE file for details.
 dnl
 
+dnl Load local macros from `m4` directory
+AC_CONFIG_MACRO_DIRS([m4])
+
 dnl Initialize autoconf--this macro can only take static strings, except for
 dnl the version number, which can be set from a call to `m4_esyscmd`.
 AC_INIT([autofont], [0.1.0], [https://github.com/source-foundry/autofont/issues])
@@ -30,13 +33,16 @@ dnl spurious rebuilds.
 dnl See: https://www.gnu.org/software/automake/manual/html_node/maintainer_002dmode.html
 AM_MAINTAINER_MODE
 
-# Add hidden `--enable-test-results` argument to turn on results output for the
-# configure unit tests.
-AC_ARG_ENABLE([test-results], [],
+# Add switch to enable compiling/installing missing dependencies to the local
+# build path in a best-effort fashion.  Generally, build dependencies are
+# considered external concerns, but to make this as easy as possible, we will
+# pull in what we can.
+AC_ARG_ENABLE([build-dependencies],
+              [AS_HELP_STRING([--enable-build-dependencies],
+                              [install/compile missing dependencies])],
               [AS_IF([test "x$enableval" = xyes],
-                     [test_results='test/configure/results'],
-                     [test_results=''])],
-              [test_results=''])
+                     [build_dependencies='true'
+                      AC_SUBST([PYTHONUSERBASE], [deps])])])
 
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
 # the root of the font project.  If left unspecified, use the parent of the
@@ -84,35 +90,20 @@ AS_IF([test "x$have_font_ufodir" != xtrue],
 AM_CONDITIONAL([HAVE_FONT_UFODIR], [test "x$have_font_ufodir" = xtrue])
 AC_SUBST([font_ufodir], [$font_ufodir])
 
-# Allow the path to `fontmake` to be set from an environment variable.  When it
-# is set to the special value 'pip', configure will sub in a path which `make`
-# knows how to resolve using pip.
-AS_IF([test "x$FONTMAKE" = xpip],
-      [AC_MSG_NOTICE([fontmake will be installed by pip])
-       FONTMAKE=deps/bin/fontmake
-       AC_SUBST([PYTHONUSERBASE], [deps])],
-      [AS_IF([test "x$FONTMAKE" = x], [FONTMAKE=fontmake])
-       AS_IF([AS_EXECUTABLE_P([$FONTMAKE])],
-             [AC_MSG_NOTICE([using fontmake '$FONTMAKE'])],
-             [requested_fontmake="$FONTMAKE"
-              AS_UNSET([FONTMAKE])
-              AC_PATH_PROG([FONTMAKE], [$requested_fontmake])])
-       AS_IF([test "x$FONTMAKE" = x -a "x$have_font_ufodir" = xtrue],
+# Allow the path to `fontmake` to be set from an environment variable.
+AS_IF([test "x$FONTMAKE" = x], [FONTMAKE=fontmake])
+AS_IF([AS_EXECUTABLE_P([$FONTMAKE])],
+      [AC_MSG_NOTICE([using fontmake '$FONTMAKE'])],
+      [requested_fontmake="$FONTMAKE"
+       AS_UNSET([FONTMAKE])
+       AC_PATH_PROG([FONTMAKE], [$requested_fontmake])])
+AS_IF([test "x$FONTMAKE" = x -a "x$have_font_ufodir" = xtrue],
+      [AS_IF([test "x$build_dependencies" = xtrue],
+             [AC_MSG_NOTICE([fontmake will be installed by pip])
+              FONTMAKE=deps/bin/fontmake
+              need_pip=true],
              [AC_MSG_ERROR([could not find fontmake])])])
-AC_ARG_VAR([FONTMAKE], [the path to fontmake or 'pip' to install
-                        fontmake local to the build environment])
-
-# Allow the path to `pip` to be set from an environment variable, but only fail
-# if it's not found when `FONTMAKE=pip`.
-AS_IF([test "x$PIP" = x], [PIP=pip])
-AS_IF([AS_EXECUTABLE_P([$PIP])],
-      [AC_MSG_NOTICE([using pip '$PIP'])],
-      [requested_pip="$PIP"
-       AS_UNSET([PIP])
-       AC_PATH_PROG([PIP], [$requested_pip])])
-AS_IF([test "x$PIP" = x -a "x$FONTMAKE" = xdeps/bin/fontmake],
-      [AC_MSG_ERROR([could not find pip])])
-AC_ARG_VAR([PIP], [the path to pip])
+AC_ARG_VAR([FONTMAKE], [the fontmake name or path to build with])
 
 # Allow the path to `python` to be set from an environment variable.
 AS_IF([test "x$PYTHON" = x], [PYTHON=python])
@@ -123,8 +114,13 @@ AS_IF([AS_EXECUTABLE_P([$PYTHON])],
        AC_PATH_PROG([PYTHON], [$requested_python])])
 AS_IF([test "x$PYTHON" = x -a "x$have_font_ufodir" = xtrue],
       [AC_MSG_ERROR([could not find python])])
-AC_ARG_VAR([PYTHON], [the path to python])
+AC_ARG_VAR([PYTHON], [the python name or path to build with])
+
+# Check for pip.  If it doesn't exist, it is only fatal if `fontmake` is
+# expected to be installed by pip (i.e., the `need_pip` variable is defined).
+AX_PYTHON_MODULE([pip], [$need_pip])
 
 # Do output
-AC_CONFIG_FILES([GNUmakefile $test_results])
+AC_CONFIG_FILES([GNUmakefile])
+AS_IF([test "x$TESTING" = xtrue], [AC_CONFIG_FILES([test/configure/results])])
 AC_OUTPUT

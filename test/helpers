@@ -9,7 +9,7 @@
 #
 
 configure() {
-    autofont/configure --enable-test-results "$@"
+    TESTING=true autofont/configure "$@"
     configure_status="$?"
     results_dir="$(dirname "$RESULTS")"
     [[ -d $results_dir ]] || mkdir -p "$results_dir"

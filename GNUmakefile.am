@@ -6,8 +6,10 @@
 # of the MIT license.  See the LICENSE file for details.
 #
 
+export PYTHONUSERBASE=$(PYTHONUSERBASE)
+
 deps/bin/fontmake:
-	PYTHONUSERBASE=$(PYTHONUSERBASE) $(PIP) install --user fontmake
+	$(PYTHON) -m pip install --user fontmake
 
 # XXX: temporary, just for testing
 all: $(FONTMAKE)
