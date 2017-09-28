@@ -85,16 +85,17 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = .
 DIST_COMMON = $(srcdir)/GNUmakefile.in $(srcdir)/GNUmakefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) install-sh \
-	missing
+	$(top_srcdir)/configure $(am__configure_deps) \
+	$(top_srcdir)/test/configure/results.in install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_python_module.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = test/configure/results
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -165,7 +166,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PIP = @PIP@
 PYTHON = @PYTHON@
 PYTHONUSERBASE = @PYTHONUSERBASE@
 SET_MAKE = @SET_MAKE@
@@ -251,6 +251,8 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
+test/configure/results: $(top_builddir)/config.status $(top_srcdir)/test/configure/results.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 tags TAGS:
 
 ctags CTAGS:
@@ -544,8 +546,10 @@ uninstall-am:
 	pdf-am ps ps-am tags-am uninstall uninstall-am
 
 
+export PYTHONUSERBASE=$(PYTHONUSERBASE)
+
 deps/bin/fontmake:
-	PYTHONUSERBASE=$(PYTHONUSERBASE) $(PIP) install --user fontmake
+	$(PYTHON) -m pip install --user fontmake
 
 # XXX: temporary, just for testing
 all: $(FONTMAKE)
