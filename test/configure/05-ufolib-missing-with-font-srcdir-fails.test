@@ -1,0 +1,43 @@
+#
+# autofont -- ufoLib Missing with Font Source Dir Fails Test
+# Copyright (C) 2017 James T. Lee
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+#
+# When configuring a project that does have font sources, when ufoLib is
+# missing and the `--enable-build-dependencies` argument is not passed,
+# configure will fail.  ufoLib is needed for detecting font family name
+# information at configure time.
+#
+# Note, we can't very accurately test this behavior on systems that already
+# have ufoLib installed.
+#
+
+# Include a set of common test functions
+source "$HELPERS"
+
+# Check test environment
+if python -c 'import ufoLib' 2>/dev/null; then
+    exit "$SKIP"
+fi
+
+# Establish expectations
+expected_config_log_message='failed to find required module ufoLib'
+
+# Prevent error on missing fontmake--that's not what were testing here
+mkdir bin
+touch bin/fontmake
+chmod +x bin/fontmake
+export PATH="bin:${PATH}"
+
+# Perform the action under test
+configure_with_fixtures
+
+# Read the results
+source "$RESULTS"
+
+# Validate the expectations
+[[ $CONFIGURE_STATUS != 0 ]] && grep "$expected_config_log_message" config.log
+
+# vi: ft=sh

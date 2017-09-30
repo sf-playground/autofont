@@ -8,6 +8,10 @@
 # Functions that may be useful in all of the test scripts.
 #
 
+# Skip exit status modeled after:
+# https://www.gnu.org/software/automake/manual/html_node/Scripts_002dbased-Testsuites.html
+SKIP=77
+
 configure() {
     TESTING=true autofont/configure "$@"
     configure_status="$?"

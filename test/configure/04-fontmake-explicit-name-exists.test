@@ -15,6 +15,12 @@ source "$HELPERS"
 # Establish expectations
 expected_fontmake='/bin/echo'
 
+# Prevent error on missing python stuff--that's not what were testing here
+mkdir bin
+touch bin/python
+chmod +x bin/python
+export PATH="bin:${PATH}"
+
 # Perform the action under test
 export FONTMAKE='echo'
 configure_with_fixtures

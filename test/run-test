@@ -47,12 +47,18 @@ test_status="$?"
 
 # Output pass/fail based on the exit status of the test script.  If it fails,
 # also print the script output prefixed by the test name.
-if [[ $test_status == 0 ]]; then
-    echo 'pass'
-else
-    echo 'fail'
-    while read line; do
-        echo "${test_name}: ${line}"
-    done <<< "$output"
-    exit "$test_status"
-fi
+case "$test_status" in
+    0)
+        echo 'pass'
+        ;;
+    77)
+        echo 'skip'
+        ;;
+    *)
+        echo 'fail'
+        while read line; do
+            echo "${test_name}: ${line}"
+        done <<< "$output"
+        exit "$test_status"
+        ;;
+esac

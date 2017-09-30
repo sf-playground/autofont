@@ -21,6 +21,9 @@ AC_INIT([autofont], [0.1.0], [https://github.com/source-foundry/autofont/issues]
 AS_IF([test "x$srcdir" = x.],
       [AC_MSG_ERROR([create a build directory and run configure from there])])
 
+dnl Determine the host system type or allow it to be set
+AC_CANONICAL_HOST
+
 dnl Initialize automake as a non-GNU standard (i.e. "foreign") project
 AM_INIT_AUTOMAKE([foreign])
 
@@ -42,7 +45,8 @@ AC_ARG_ENABLE([build-dependencies],
                               [install/compile missing dependencies])],
               [AS_IF([test "x$enableval" = xyes],
                      [build_dependencies='true'
-                      AC_SUBST([PYTHONUSERBASE], [deps])])])
+                      AC_SUBST([PYTHONUSERBASE], [deps])
+                      export PYTHONUSERBASE])])
 
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
 # the root of the font project.  If left unspecified, use the parent of the
@@ -119,6 +123,21 @@ AC_ARG_VAR([PYTHON], [the python name or path to build with])
 # Check for pip.  If it doesn't exist, it is only fatal if `fontmake` is
 # expected to be installed by pip (i.e., the `need_pip` variable is defined).
 AX_PYTHON_MODULE([pip], [$need_pip])
+
+# Check for ufoLib.  This will be used by configure to read the source font
+# information and make configuration-time decisions based on it.  Thus, it is
+# required if we've detected UFOs.  If we don't detect ufoLib, and the
+# --enable-build-dependencies argument is set, then configure will attempt to
+# install it with pip to a build-local directory called `deps`
+# (based on the `PYTHONUSERBASE` environment variable).
+AS_IF([test "x$have_font_ufodir" = xtrue -a "x$build_dependencies" != xtrue],
+      [need_ufoLib=true])
+AX_PYTHON_MODULE([ufoLib], [$need_ufoLib])
+AS_IF([test "x$HAVE_PYMOD_UFOLIB" = xno -a "x$have_font_ufodir" = xtrue],
+      [AC_MSG_NOTICE([installing ufoLib with pip])
+       AC_RUN_LOG(["$PYTHON" -m pip install --user ufoLib >&2])
+       AX_PYTHON_MODULE([ufoLib], [required])])
+AC_SUBST([HAVE_PYMOD_UFOLIB])
 
 # Do output
 AC_CONFIG_FILES([GNUmakefile])

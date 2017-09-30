@@ -1,0 +1,41 @@
+#
+# autofont -- ufoLib Installs With Font Source Dir Test
+# Copyright (C) 2017 James T. Lee
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+#
+# When configuring a project that does have font sources, when ufoLib is
+# missing and the `--enable-build-dependencies` argument is passed, configure
+# will install ufoLib to a build-local directory.  It will be used for
+# detecting font family name information at configure time.
+#
+# Note, we can't very accurately test this behavior on systems that already
+# have ufoLib installed.
+#
+
+# Include a set of common test functions
+source "$HELPERS"
+
+# Check test environment
+if python -c 'import ufoLib' 2>/dev/null; then
+    exit "$SKIP"
+fi
+
+# Establish expectations
+expected_have_pymod_ufolib='yes'
+expected_ufolib_root='deps'
+
+# Perform the action under test
+configure_with_fixtures --enable-build-dependencies
+
+# Read the results
+source "$RESULTS"
+
+# Validate the expectations
+ufolib_path="$(find "$expected_ufolib_root" -name 'ufoLib*')"
+[[ $HAVE_PYMOD_UFOLIB == $expected_have_pymod_ufolib &&
+   $ufolib_path != '' ]] &&
+grep 'installing ufoLib with pip' config.log
+
+# vi: ft=sh
