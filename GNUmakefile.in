@@ -559,7 +559,7 @@ uninstall-am:
 	pdf-am ps ps-am tags-am uninstall uninstall-am
 
 
-export PYTHONUSERBASE=$(PYTHONUSERBASE)
+@HAVE_FONT_UFODIR_TRUE@export PYTHONUSERBASE=$(PYTHONUSERBASE)
 
 deps/bin/fontmake:
 	$(PYTHON) -m pip install --user fontmake
