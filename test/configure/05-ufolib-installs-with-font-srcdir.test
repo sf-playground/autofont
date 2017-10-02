@@ -18,6 +18,7 @@
 source "$HELPERS"
 
 # Check test environment
+export PYTHONUSERBASE=/does/not/exist
 if python -c 'import ufoLib' 2>/dev/null; then
     exit "$SKIP"
 fi

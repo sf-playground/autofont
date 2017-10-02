@@ -13,10 +13,12 @@
 source "$HELPERS"
 
 # Establish expectations
-expected_font_ufodir='autofont/..'
+expected_font_ufodir="$PWD"
 
 # Simulate known environment
-mkdir -p foo.ufo src/foo.ufo source/foo.ufo
+make_fake_ufo foo.ufo Foo
+make_fake_ufo src/foo.ufo Foo
+make_fake_ufo source/foo.ufo Foo
 
 # Perform the action under test
 configure_with_build_deps

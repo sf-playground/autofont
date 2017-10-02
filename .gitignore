@@ -1,1 +1,5 @@
+autom4te.cache
+config.guess
 config.log
+config.sub
+test/fixtures/Hack

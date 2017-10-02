@@ -21,24 +21,51 @@ configure() {
 }
 
 configure_with_build_deps() {
-    fake_build_deps
-    configure "$@"
+    which python > /dev/null || exit $SKIP
+
+    mkdir bin
+    touch bin/fontmake
+    chmod +x bin/fontmake
+    export PATH="bin:${PATH}"
+
+    configure --enable-build-dependencies "$@"
+}
+
+configure_with_fixtures_and_build_deps() {
+    configure_with_build_deps --with-font-srcdir=../../fixtures/Hack "$@"
 }
 
 configure_with_fixtures() {
     configure --with-font-srcdir=../../fixtures/Hack "$@"
 }
 
-configure_with_fixtures_and_build_deps() {
-    fake_build_deps
-    configure --with-font-srcdir=../../fixtures/Hack "$@"
-}
+make_fake_ufo() {
+    local path="$1"
+    local name="$2"
 
-fake_build_deps() {
-    mkdir bin
-    touch bin/fontmake bin/python
-    chmod +x bin/fontmake bin/python
-    export PATH="bin:${PATH}"
+    mkdir -p "$path"
+
+    cat > "${path}/fontinfo.plist" <<FONTINFO
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>familyName</key>
+        <string>${name}</string>
+    </dict>
+</plist>
+FONTINFO
+
+    cat > "${path}/metainfo.plist" <<METAINFO
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>formatVersion</key>
+        <integer>2</integer>
+    </dict>
+</plist>
+METAINFO
 }
 
 # vi: ft=sh

@@ -70,11 +70,9 @@ AC_DEFUN([CHECK_FONT_UFODIRS],
             AC_MSG_CHECKING([$dir for UFO sources])
             AS_IF([(cd -L "$dir" && ls *.ufo) > /dev/null 2>&1],
                   [AC_MSG_RESULT([found])
-                   have_font_ufodir='true'
-                   font_ufodir="$dir"
+                   AC_SUBST([font_ufodir], [`cd -L "$dir" && pwd`])
                    break],
-                  [AC_MSG_RESULT([not found])
-                   have_font_ufodir='false'])
+                  [AC_MSG_RESULT([not found])])
           done])
 
 # Expose a configure argument, --with-font-ufodirname, that can be used to
@@ -89,10 +87,16 @@ AC_ARG_WITH([font-ufodirname],
             [CHECK_FONT_UFODIRS(["$font_srcdir"
                                  "${font_srcdir}/src"
                                  "${font_srcdir}/source"])])
-AS_IF([test "x$have_font_ufodir" != xtrue],
+AS_IF([test "x$font_ufodir" = x],
       [AC_MSG_NOTICE([no UFO sources found; fonts will not be built])])
-AM_CONDITIONAL([HAVE_FONT_UFODIR], [test "x$have_font_ufodir" = xtrue])
-AC_SUBST([font_ufodir], [$font_ufodir])
+AM_CONDITIONAL([HAVE_FONT_UFODIR], [test "x$font_ufodir" != x])
+
+
+#
+# Everything in the block that follows will only be performed if we acutally
+# have a font to configure.
+#
+AS_IF([test "x$font_ufodir" != x], [
 
 # Allow the path to `fontmake` to be set from an environment variable.
 AS_IF([test "x$FONTMAKE" = x], [FONTMAKE=fontmake])
@@ -101,7 +105,7 @@ AS_IF([AS_EXECUTABLE_P([$FONTMAKE])],
       [requested_fontmake="$FONTMAKE"
        AS_UNSET([FONTMAKE])
        AC_PATH_PROG([FONTMAKE], [$requested_fontmake])])
-AS_IF([test "x$FONTMAKE" = x -a "x$have_font_ufodir" = xtrue],
+AS_IF([test "x$FONTMAKE" = x],
       [AS_IF([test "x$build_dependencies" = xtrue],
              [AC_MSG_NOTICE([fontmake will be installed by pip])
               FONTMAKE=deps/bin/fontmake
@@ -116,7 +120,7 @@ AS_IF([AS_EXECUTABLE_P([$PYTHON])],
       [requested_python="$PYTHON"
        AS_UNSET([PYTHON])
        AC_PATH_PROG([PYTHON], [$requested_python])])
-AS_IF([test "x$PYTHON" = x -a "x$have_font_ufodir" = xtrue],
+AS_IF([test "x$PYTHON" = x],
       [AC_MSG_ERROR([could not find python])])
 AC_ARG_VAR([PYTHON], [the python name or path to build with])
 
@@ -130,14 +134,28 @@ AX_PYTHON_MODULE([pip], [$need_pip])
 # --enable-build-dependencies argument is set, then configure will attempt to
 # install it with pip to a build-local directory called `deps`
 # (based on the `PYTHONUSERBASE` environment variable).
-AS_IF([test "x$have_font_ufodir" = xtrue -a "x$build_dependencies" != xtrue],
+AS_IF([test "x$build_dependencies" != xtrue],
       [need_ufoLib=true])
 AX_PYTHON_MODULE([ufoLib], [$need_ufoLib])
-AS_IF([test "x$HAVE_PYMOD_UFOLIB" = xno -a "x$have_font_ufodir" = xtrue],
+AS_IF([test "x$HAVE_PYMOD_UFOLIB" = xno],
       [AC_MSG_NOTICE([installing ufoLib with pip])
        AC_RUN_LOG(["$PYTHON" -m pip install --user ufoLib >&2])
        AX_PYTHON_MODULE([ufoLib], [required])])
 AC_SUBST([HAVE_PYMOD_UFOLIB])
+
+# Detect the typeface family name from the UFO sources.  UFOs only define the
+# font family name, or typeface name.  Projects should be able to deliver
+# multiple typefaces, as long as they are part of the same family, which is
+# determined by whether the names all start with the same substring.
+AC_MSG_CHECKING([for the source typeface family name])
+source_typeface_family="`"$PYTHON" "${srcdir}/tools/typeface-family-name.py" "$font_ufodir"/*.ufo 2>&5`"
+AS_IF([test $? -eq 0 -a "x$source_typeface_family" != x],
+      [AC_MSG_RESULT([$source_typeface_family])],
+      [AC_MSG_RESULT([not found])
+       AC_MSG_ERROR([could not detect typeface family name])])
+AC_SUBST([source_typeface_family], [$source_typeface_family])
+
+]) # AS_IF([test "x$ufo_dir" != x])
 
 # Do output
 AC_CONFIG_FILES([GNUmakefile])
