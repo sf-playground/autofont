@@ -586,12 +586,13 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+source_typeface_family
 HAVE_PYMOD_UFOLIB
 PYTHON
 FONTMAKE
-font_ufodir
 HAVE_FONT_UFODIR_FALSE
 HAVE_FONT_UFODIR_TRUE
+font_ufodir
 font_srcdir
 PYTHONUSERBASE
 MAINT
@@ -2516,13 +2517,12 @@ $as_echo_n "checking $dir for UFO sources... " >&6; }
             if (cd -L "$dir" && ls *.ufo) > /dev/null 2>&1; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
 $as_echo "found" >&6; }
-                   have_font_ufodir='true'
-                   font_ufodir="$dir"
+                   font_ufodir=`cd -L "$dir" && pwd`
+
                    break
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
 $as_echo "not found" >&6; }
-                   have_font_ufodir='false'
 fi
           done
 else
@@ -2532,22 +2532,21 @@ $as_echo_n "checking $dir for UFO sources... " >&6; }
             if (cd -L "$dir" && ls *.ufo) > /dev/null 2>&1; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
 $as_echo "found" >&6; }
-                   have_font_ufodir='true'
-                   font_ufodir="$dir"
+                   font_ufodir=`cd -L "$dir" && pwd`
+
                    break
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
 $as_echo "not found" >&6; }
-                   have_font_ufodir='false'
 fi
           done
 fi
 
-if test "x$have_font_ufodir" != xtrue; then :
+if test "x$font_ufodir" = x; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: no UFO sources found; fonts will not be built" >&5
 $as_echo "$as_me: no UFO sources found; fonts will not be built" >&6;}
 fi
- if test "x$have_font_ufodir" = xtrue; then
+ if test "x$font_ufodir" != x; then
   HAVE_FONT_UFODIR_TRUE=
   HAVE_FONT_UFODIR_FALSE='#'
 else
@@ -2555,7 +2554,13 @@ else
   HAVE_FONT_UFODIR_FALSE=
 fi
 
-font_ufodir=$font_ufodir
+
+
+#
+# Everything in the block that follows will only be performed if we acutally
+# have a font to configure.
+#
+if test "x$font_ufodir" != x; then :
 
 
 # Allow the path to `fontmake` to be set from an environment variable.
@@ -2609,7 +2614,7 @@ fi
 
 
 fi
-if test "x$FONTMAKE" = x -a "x$have_font_ufodir" = xtrue; then :
+if test "x$FONTMAKE" = x; then :
   if test "x$build_dependencies" = xtrue; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: fontmake will be installed by pip" >&5
 $as_echo "$as_me: fontmake will be installed by pip" >&6;}
@@ -2672,7 +2677,7 @@ fi
 
 
 fi
-if test "x$PYTHON" = x -a "x$have_font_ufodir" = xtrue; then :
+if test "x$PYTHON" = x; then :
   as_fn_error $? "could not find python" "$LINENO" 5
 fi
 
@@ -2717,7 +2722,7 @@ $as_echo "no" >&6; }
 # --enable-build-dependencies argument is set, then configure will attempt to
 # install it with pip to a build-local directory called `deps`
 # (based on the `PYTHONUSERBASE` environment variable).
-if test "x$have_font_ufodir" = xtrue -a "x$build_dependencies" != xtrue; then :
+if test "x$build_dependencies" != xtrue; then :
   need_ufoLib=true
 fi
 
@@ -2751,7 +2756,7 @@ $as_echo "no" >&6; }
         fi
     fi
 
-if test "x$HAVE_PYMOD_UFOLIB" = xno -a "x$have_font_ufodir" = xtrue; then :
+if test "x$HAVE_PYMOD_UFOLIB" = xno; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: installing ufoLib with pip" >&5
 $as_echo "$as_me: installing ufoLib with pip" >&6;}
        { { $as_echo "$as_me:${as_lineno-$LINENO}: \"\$PYTHON\" -m pip install --user ufoLib >&2"; } >&5
@@ -2792,6 +2797,27 @@ $as_echo "no" >&6; }
 
 fi
 
+
+# Detect the typeface family name from the UFO sources.  UFOs only define the
+# font family name, or typeface name.  Projects should be able to deliver
+# multiple typefaces, as long as they are part of the same family, which is
+# determined by whether the names all start with the same substring.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for the source typeface family name" >&5
+$as_echo_n "checking for the source typeface family name... " >&6; }
+source_typeface_family="`"$PYTHON" "${srcdir}/tools/typeface-family-name.py" "$font_ufodir"/*.ufo 2>&5`"
+if test $? -eq 0 -a "x$source_typeface_family" != x; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $source_typeface_family" >&5
+$as_echo "$source_typeface_family" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
+       as_fn_error $? "could not detect typeface family name" "$LINENO" 5
+fi
+source_typeface_family=$source_typeface_family
+
+
+
+fi # AS_IF([test "x$ufo_dir" != x])
 
 # Do output
 ac_config_files="$ac_config_files GNUmakefile"
