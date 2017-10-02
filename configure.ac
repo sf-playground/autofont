@@ -124,19 +124,24 @@ AS_IF([test "x$PYTHON" = x],
       [AC_MSG_ERROR([could not find python])])
 AC_ARG_VAR([PYTHON], [the python name or path to build with])
 
-# Check for pip.  If it doesn't exist, it is only fatal if `fontmake` is
-# expected to be installed by pip (i.e., the `need_pip` variable is defined).
-AX_PYTHON_MODULE([pip], [$need_pip])
-
 # Check for ufoLib.  This will be used by configure to read the source font
 # information and make configuration-time decisions based on it.  Thus, it is
 # required if we've detected UFOs.  If we don't detect ufoLib, and the
-# --enable-build-dependencies argument is set, then configure will attempt to
-# install it with pip to a build-local directory called `deps`
-# (based on the `PYTHONUSERBASE` environment variable).
+# --enable-build-dependencies argument is set, then configure will check for
+# pip and install ufoLib later.
 AS_IF([test "x$build_dependencies" != xtrue],
       [need_ufoLib=true])
 AX_PYTHON_MODULE([ufoLib], [$need_ufoLib])
+AS_IF([test "x$HAVE_PYMOD_UFOLIB" = xno],
+      [need_pip=true])
+
+# Check for pip.  If it doesn't exist, it is only fatal if `fontmake` or
+# `ufoLib` is expected to be installed by pip (i.e., the `need_pip` variable is
+# defined).
+AX_PYTHON_MODULE([pip], [$need_pip])
+
+# Install ufoLib, if necessary, using pip to a build-local directory called
+# `deps` (based on the `PYTHONUSERBASE` environment variable).
 AS_IF([test "x$HAVE_PYMOD_UFOLIB" = xno],
       [AC_MSG_NOTICE([installing ufoLib with pip])
        AC_RUN_LOG(["$PYTHON" -m pip install --user ufoLib >&2])
