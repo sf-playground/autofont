@@ -6,7 +6,9 @@
 # of the MIT license.  See the LICENSE file for details.
 #
 
+if HAVE_FONT_UFODIR
 export PYTHONUSERBASE=$(PYTHONUSERBASE)
+endif
 
 deps/bin/fontmake:
 	$(PYTHON) -m pip install --user fontmake

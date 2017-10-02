@@ -18,7 +18,7 @@ expected_config_log_message="could not detect typeface family name"
 # Perform the action under test
 make_fake_ufo Foo.ufo Foo
 make_fake_ufo Bar.ufo Bar
-configure_with_build_deps --with-font-srcdir=.
+configure_with_build_deps
 
 # Read the results
 source "$RESULTS"

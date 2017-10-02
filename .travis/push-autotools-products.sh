@@ -33,7 +33,7 @@ if [[ $GITHUB_TOKEN == '' ]]; then
 fi
 
 # Add the Autotools products as they would be distributed by `make dist`.
-git add GNUmakefile.in aclocal.m4 configure install-sh missing
+git add GNUmakefile.in aclocal.m4 config.guess config.sub configure install-sh missing
 
 # Commit with a message that will not trigger another build.
 git commit -F - <<END

@@ -19,7 +19,7 @@ expected_source_typeface_family='Foo'
 # Perform the action under test
 make_fake_ufo FooSans.ufo 'Foo Sans'
 make_fake_ufo FooMono.ufo 'Foo Mono'
-configure_with_build_deps --with-font-srcdir=.
+configure_with_build_deps
 
 # Read the results
 source "$RESULTS"
