@@ -23,6 +23,6 @@ configure_with_fixtures --enable-build-dependencies
 source "$RESULTS"
 
 # Validate the expectations
-[[ $FONTMAKE == $expected_fontmake ]] && grep 'fontmake will be installed by pip' config.log
+[[ $FONTMAKE == $expected_fontmake ]] && grep 'fontmake will be installed with pip by make' config.log
 
 # vi: ft=sh

@@ -107,7 +107,7 @@ AS_IF([AS_EXECUTABLE_P([$FONTMAKE])],
        AC_PATH_PROG([FONTMAKE], [$requested_fontmake])])
 AS_IF([test "x$FONTMAKE" = x],
       [AS_IF([test "x$build_dependencies" = xtrue],
-             [AC_MSG_NOTICE([fontmake will be installed by pip])
+             [AC_MSG_NOTICE([fontmake will be installed with pip by make])
               FONTMAKE=deps/bin/fontmake
               need_pip=true],
              [AC_MSG_ERROR([could not find fontmake])])])
@@ -133,7 +133,8 @@ AS_IF([test "x$build_dependencies" != xtrue],
       [need_ufoLib=true])
 AX_PYTHON_MODULE([ufoLib], [$need_ufoLib])
 AS_IF([test "x$HAVE_PYMOD_UFOLIB" = xno],
-      [need_pip=true])
+      [AC_MSG_NOTICE([ufoLib will be installed with pip later during configuration])
+       need_pip=true])
 
 # Check for pip.  If it doesn't exist, it is only fatal if `fontmake` or
 # `ufoLib` is expected to be installed by pip (i.e., the `need_pip` variable is
