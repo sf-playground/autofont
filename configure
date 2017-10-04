@@ -586,6 +586,10 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+HAVE_INSTALLDIR_FALSE
+HAVE_INSTALLDIR_TRUE
+installdir
+source_typeface_family_lc
 source_typeface_family
 HAVE_PYMOD_UFOLIB
 PYTHON
@@ -679,6 +683,7 @@ enable_maintainer_mode
 enable_build_dependencies
 with_font_srcdir
 with_font_ufodirname
+with_installdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1318,6 +1323,7 @@ Optional Packages:
   --with-font-ufodirname=DIRNAME
                           build from UFO sources in FONT_SRCDIR/DIRNAME [`.',
                           `src', or `source']
+  --with-installdir=DIR   install the fonts to DIR
 
 Some influential environment variables:
   FONTMAKE    the fontmake name or path to build with
@@ -2824,8 +2830,46 @@ fi
 source_typeface_family=$source_typeface_family
 
 
+# Transform 'Font Name' -> 'font-name', for use in unix style directory names.
+source_typeface_family_lc="`echo "$source_typeface_family" | tr 'A-Z ' 'a-z-'`"
+source_typeface_family_lc=$source_typeface_family_lc
+
+
 
 fi # AS_IF([test "x$ufo_dir" != x])
+
+# Expose a configure argument to set the font installation directory or disable
+# installation.  If unspecified, try to choose a reasonable default based on
+# the **host** (target) operating system (not necessarily the **build**
+# operating system).  If a default can't be chosen, installation is disabled.
+#
+# TODO: Set default paths for darwin (macos?), cygwin, mingw32 hosts
+
+# Check whether --with-installdir was given.
+if test "${with_installdir+set}" = set; then :
+  withval=$with_installdir; if test "x$withval" != xno; then :
+  installdir="$withval"
+fi
+else
+  case $host_os in #(
+  linux*) :
+    installdir="\${datadir}/fonts/\${source_typeface_family_lc}" ;; #(
+  *) :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: unsupported OS $host_os; installation will be disabled" >&5
+$as_echo "$as_me: unsupported OS $host_os; installation will be disabled" >&6;} ;;
+esac
+fi
+
+installdir=$installdir
+
+ if test "x$installdir" != x; then
+  HAVE_INSTALLDIR_TRUE=
+  HAVE_INSTALLDIR_FALSE='#'
+else
+  HAVE_INSTALLDIR_TRUE='#'
+  HAVE_INSTALLDIR_FALSE=
+fi
+
 
 # Do output
 ac_config_files="$ac_config_files GNUmakefile"
@@ -2994,6 +3038,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${HAVE_FONT_UFODIR_TRUE}" && test -z "${HAVE_FONT_UFODIR_FALSE}"; then
   as_fn_error $? "conditional \"HAVE_FONT_UFODIR\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_INSTALLDIR_TRUE}" && test -z "${HAVE_INSTALLDIR_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_INSTALLDIR\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
