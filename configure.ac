@@ -161,7 +161,27 @@ AS_IF([test $? -eq 0 -a "x$source_typeface_family" != x],
        AC_MSG_ERROR([could not detect typeface family name])])
 AC_SUBST([source_typeface_family], [$source_typeface_family])
 
+# Transform 'Font Name' -> 'font-name', for use in unix style directory names.
+source_typeface_family_lc="`echo "$source_typeface_family" | tr 'A-Z ' 'a-z-'`"
+AC_SUBST([source_typeface_family_lc], [$source_typeface_family_lc])
+
 ]) # AS_IF([test "x$ufo_dir" != x])
+
+# Expose a configure argument to set the font installation directory or disable
+# installation.  If unspecified, try to choose a reasonable default based on
+# the **host** (target) operating system (not necessarily the **build**
+# operating system).  If a default can't be chosen, installation is disabled.
+#
+# TODO: Set default paths for darwin (macos?), cygwin, mingw32 hosts
+AC_ARG_WITH([installdir],
+            [AS_HELP_STRING([--with-installdir=DIR],
+                            [install the fonts to DIR])],
+            [AS_IF([test "x$withval" != xno], [installdir="$withval"])],
+            [AS_CASE([$host_os],
+                     [linux*], [installdir="\${datadir}/fonts/\${source_typeface_family_lc}"],
+                               [AC_MSG_NOTICE([unsupported OS $host_os; installation will be disabled])])])
+AC_SUBST([installdir], [$installdir])
+AM_CONDITIONAL([HAVE_INSTALLDIR], [test "x$installdir" != x])
 
 # Do output
 AC_CONFIG_FILES([GNUmakefile])

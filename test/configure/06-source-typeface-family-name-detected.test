@@ -14,6 +14,7 @@ source "$HELPERS"
 
 # Establish expectations
 expected_source_typeface_family='Hack'
+expected_source_typeface_family_lc='hack'
 
 # Perform the action under test
 configure_with_fixtures_and_build_deps
@@ -22,8 +23,7 @@ configure_with_fixtures_and_build_deps
 source "$RESULTS"
 
 # Validate the expectations
-[[ $source_typeface_family == $expected_source_typeface_family ]]
-
-cat config.log
+[[ $source_typeface_family == $expected_source_typeface_family &&
+   $source_typeface_family_lc == $expected_source_typeface_family_lc ]]
 
 # vi: ft=sh

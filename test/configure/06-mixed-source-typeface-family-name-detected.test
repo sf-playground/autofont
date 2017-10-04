@@ -14,17 +14,19 @@
 source "$HELPERS"
 
 # Establish expectations
-expected_source_typeface_family='Foo'
+expected_source_typeface_family='Foo Bar'
+expected_source_typeface_family_lc='foo-bar'
 
 # Perform the action under test
-make_fake_ufo FooSans.ufo 'Foo Sans'
-make_fake_ufo FooMono.ufo 'Foo Mono'
+make_fake_ufo FooSans.ufo 'Foo Bar Sans'
+make_fake_ufo FooMono.ufo 'Foo Bar Mono'
 configure_with_build_deps
 
 # Read the results
 source "$RESULTS"
 
 # Validate the expectations
-[[ $source_typeface_family == $expected_source_typeface_family ]]
+[[ $source_typeface_family == $expected_source_typeface_family &&
+   $source_typeface_family_lc == $expected_source_typeface_family_lc ]]
 
 # vi: ft=sh
