@@ -1,29 +1,30 @@
 #
-# Autofont -- Homogeneous Source Typeface Family Name Detected Test
+# Autofont -- Mixed Source Typeface Family Name Detected Test
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
-# Configure shall detect the typeface family name.  If the UFOs have the same
-# font family names, it will be set as the typeface family name.
+# Configure shall detect the typeface family name.  If the UFOs have different
+# font family names that share a head substring, it will be set as the typeface
+# family name.
 #
 
 # Include a set of common test functions
 source "$HELPERS"
 
 # Establish expectations
-expected_source_typeface_family='Hack'
+expected_source_typeface_family='Foo'
 
 # Perform the action under test
-configure_with_fixtures_and_build_deps
+make_fake_ufo FooSans.ufo 'Foo Sans'
+make_fake_ufo FooMono.ufo 'Foo Mono'
+configure_with_build_deps
 
 # Read the results
 source "$RESULTS"
 
 # Validate the expectations
 [[ $source_typeface_family == $expected_source_typeface_family ]]
-
-cat config.log
 
 # vi: ft=sh
