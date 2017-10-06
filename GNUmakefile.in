@@ -21,6 +21,7 @@
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 #
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -119,6 +120,35 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+am__installdirs = "$(DESTDIR)$(installdir)"
+DATA = $(install_DATA) $(noinst_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
@@ -228,6 +258,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+@HAVE_FONT_UFODIR_TRUE@TTFS = $(patsubst %.ufo,%.ttf,$(notdir $(wildcard $(font_ufodir)/*.ufo)))
+@HAVE_FONT_UFODIR_TRUE@@HAVE_INSTALLDIR_TRUE@install_DATA = $(TTFS)
+@HAVE_FONT_UFODIR_TRUE@@HAVE_INSTALLDIR_FALSE@noinst_DATA = $(TTFS)
 EXTRA_DIST = GNUmakefile LICENSE README.md test tools
 all: all-am
 
@@ -268,6 +301,27 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 $(am__aclocal_m4_deps):
 test/configure/results: $(top_builddir)/config.status $(top_srcdir)/test/configure/results.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
+install-installDATA: $(install_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(install_DATA)'; test -n "$(installdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(installdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(installdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(installdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(installdir)" || exit $$?; \
+	done
+
+uninstall-installDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(install_DATA)'; test -n "$(installdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(installdir)'; $(am__uninstall_files_from_dir)
 tags TAGS:
 
 ctags CTAGS:
@@ -443,8 +497,11 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: GNUmakefile
+all-am: GNUmakefile $(DATA)
 installdirs:
+	for dir in "$(DESTDIR)$(installdir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -496,7 +553,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-installDATA
 
 install-dvi: install-dvi-am
 
@@ -542,7 +599,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-installDATA
 
 .MAKE: install-am install-strip
 
@@ -554,20 +611,23 @@ uninstall-am:
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-info-am install-installDATA install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags-am uninstall uninstall-am
+	pdf-am ps ps-am tags-am uninstall uninstall-am \
+	uninstall-installDATA
 
 
-@HAVE_FONT_UFODIR_TRUE@export PYTHONUSERBASE=$(PYTHONUSERBASE)
-
+export PYTHONUSERBASE
 deps/bin/fontmake:
 	$(PYTHON) -m pip install --user fontmake
 
-# XXX: temporary, just for testing
-all: $(FONTMAKE)
+master_ttf/%.ttf: $(font_ufodir)/%.ufo $(FONTMAKE)
+	$(FONTMAKE) --verbose ERROR -u $< -o ttf
+
+%.ttf: master_ttf/%.ttf
+	cp $< $@
 
 distclean-local:
 	-rm -rf deps
