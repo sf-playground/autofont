@@ -1,0 +1,36 @@
+#
+# Autofont - Base Build/No Install Test
+# Copyright (C) 2017 James T. Lee
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+#
+# When not provided with an installdir, TTFs should be built, but not
+# installed.
+#
+
+# Include a set of common test functions
+source "$HELPERS"
+
+# Establish expectations
+expected_build_ttfs=('Hack-Regular.ttf' 'Hack-Bold.ttf' 'Hack-Italic.ttf' 'Hack-BoldItalic.ttf')
+expected_installed_files=0
+
+# Setup
+configure_with_fixtures_and_build_deps --without-installdir
+
+# Perform the action under test
+make && make DESTDIR=install_root install
+
+# Validate the expectations
+for ttf in "${expected_build_ttfs[@]}"; do
+    if [[ ! -f $ttf ]]; then
+        echo "Expected $ttf to be built, but it is missing"
+        exit 1
+    fi
+done
+
+installed_files="$(ls -1 install_root/ | wc -l)"
+(( installed_files == expected_installed_files ))
+
+# vi: ft=sh

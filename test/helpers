@@ -22,12 +22,6 @@ configure() {
 
 configure_with_build_deps() {
     which python > /dev/null || exit $SKIP
-
-    mkdir bin
-    touch bin/fontmake
-    chmod +x bin/fontmake
-    export PATH="bin:${PATH}"
-
     configure --enable-build-dependencies "$@"
 }
 

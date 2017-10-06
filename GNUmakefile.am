@@ -7,14 +7,23 @@
 #
 
 if HAVE_FONT_UFODIR
-export PYTHONUSERBASE=$(PYTHONUSERBASE)
-endif
+TTFS = $(patsubst %.ufo,%.ttf,$(notdir $(wildcard $(font_ufodir)/*.ufo)))
+if HAVE_INSTALLDIR
+install_DATA = $(TTFS)
+else
+noinst_DATA = $(TTFS)
+endif # HAVE_INSTALLDIR
+endif # HAVE_FONT_UFODIR
 
+export PYTHONUSERBASE
 deps/bin/fontmake:
 	$(PYTHON) -m pip install --user fontmake
 
-# XXX: temporary, just for testing
-all: $(FONTMAKE)
+master_ttf/%.ttf: $(font_ufodir)/%.ufo $(FONTMAKE)
+	$(FONTMAKE) --verbose ERROR -u $< -o ttf
+
+%.ttf: master_ttf/%.ttf
+	cp $< $@
 
 distclean-local:
 	-rm -rf deps

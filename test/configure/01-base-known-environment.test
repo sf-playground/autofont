@@ -16,6 +16,12 @@ source "$HELPERS"
 expected_fontmake="bin/fontmake"
 expected_python="$(which python)"
 
+# Simulate known environment
+mkdir bin
+touch bin/fontmake
+chmod +x bin/fontmake
+export PATH="bin:$PATH"
+
 # Perform the action under test
 configure_with_fixtures_and_build_deps
 

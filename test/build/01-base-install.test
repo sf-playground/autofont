@@ -1,0 +1,42 @@
+#
+# Autofont - Base Build/Install Test
+# Copyright (C) 2017 James T. Lee
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+#
+# Without any special configure arguments, make should build and install TTFs.
+#
+
+# Include a set of common test functions
+source "$HELPERS"
+
+# Establish expectations
+expected_build_ttfs=('Hack-Regular.ttf' 'Hack-Bold.ttf' 'Hack-Italic.ttf' 'Hack-BoldItalic.ttf')
+expected_install_ttfs=('install_root/ttf/Hack-Regular.ttf'
+                       'install_root/ttf/Hack-Bold.ttf'
+                       'install_root/ttf/Hack-Italic.ttf'
+                       'install_root/ttf/Hack-BoldItalic.ttf')
+
+# Setup
+configure_with_fixtures_and_build_deps --with-installdir=/ttf
+
+# Perform the action under test
+make && make DESTDIR=install_root install
+
+# Validate the expectations
+for ttf in "${expected_build_ttfs[@]}"; do
+    if [[ ! -f $ttf ]]; then
+        echo "Expected $ttf to be built, but it is missing"
+        exit 1
+    fi
+done
+
+for ttf in "${expected_install_ttfs[@]}"; do
+    if [[ ! -f $ttf ]]; then
+        echo "Expected $ttf to be installed, but it is missing"
+        exit 1
+    fi
+done
+
+# vi: ft=sh
