@@ -45,7 +45,7 @@ AC_ARG_ENABLE([build-dependencies],
                               [install/compile missing dependencies])],
               [AS_IF([test "x$enableval" = xyes],
                      [build_dependencies='true'
-                      AC_SUBST([PYTHONUSERBASE], [deps])
+                      AC_SUBST([PYTHONUSERBASE], [`pwd`/deps])
                       export PYTHONUSERBASE])])
 
 # Expose a configure argument, --with-font-srcdir, that can be used to specify
