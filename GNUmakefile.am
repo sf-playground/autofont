@@ -25,6 +25,9 @@ master_ttf/%.ttf: $(font_ufodir)/%.ufo $(FONTMAKE)
 %.ttf: master_ttf/%.ttf
 	cp $< $@
 
+clean-local:
+	-rm -rf master_ttf *.ttf
+
 distclean-local:
 	-rm -rf deps
 
