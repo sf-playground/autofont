@@ -165,6 +165,14 @@ AC_SUBST([source_typeface_family], [$source_typeface_family])
 source_typeface_family_lc="`echo "$source_typeface_family" | tr 'A-Z ' 'a-z-'`"
 AC_SUBST([source_typeface_family_lc], [$source_typeface_family_lc])
 
+# Detect the typeface version from the UFO sources.
+AC_MSG_CHECKING([for the source typeface version])
+source_typeface_version_major="`"$PYTHON" "${srcdir}/tools/typeface-property.py" versionMajor "$font_ufodir"/*.ufo 2>&5`"
+source_typeface_version_minor="`"$PYTHON" "${srcdir}/tools/typeface-property.py" versionMinor "$font_ufodir"/*.ufo 2>&5`"
+source_typeface_version="`printf '%d.%03d' "$source_typeface_version_major" "$source_typeface_version_minor"`"
+AC_MSG_RESULT([$source_typeface_version])
+AC_SUBST([source_typeface_version], [$source_typeface_version])
+
 ]) # AS_IF([test "x$ufo_dir" != x])
 
 # Expose a configure argument to set the font installation directory or disable

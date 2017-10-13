@@ -1,0 +1,32 @@
+#
+# Autofont -- Source Typeface Version Not Detected Test
+# Copyright (C) 2017 James T. Lee
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+#
+# Configure shall detect the typeface version from the UFO metadata.  If the
+# UFO does not contain valid version information, it will default to 0.000.
+#
+
+# Include a set of common test functions
+source "$HELPERS"
+
+# Establish expectations
+expected_source_typeface_version='0.000'
+
+# Simulate known environment
+make_fake_ufo Foo.ufo Foo
+sed -i '/versionMajor/,/integer/d' Foo.ufo/fontinfo.plist
+sed -i '/versionMinor/,/integer/d' Foo.ufo/fontinfo.plist
+
+# Perform the action under test
+configure_with_build_deps
+
+# Read the results
+source "$RESULTS"
+
+# Validate the expectations
+[[ $source_typeface_version == $expected_source_typeface_version ]]
+
+# vi: ft=sh

@@ -46,6 +46,10 @@ make_fake_ufo() {
     <dict>
         <key>familyName</key>
         <string>${name}</string>
+        <key>versionMajor</key>
+        <integer>1</integer>
+        <key>versionMinor</key>
+        <integer>23</integer>
     </dict>
 </plist>
 FONTINFO

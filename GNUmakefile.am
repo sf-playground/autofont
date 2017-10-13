@@ -6,6 +6,7 @@
 # of the MIT license.  See the LICENSE file for details.
 #
 
+# Define what to build and where to install it based on configuration
 if HAVE_FONT_UFODIR
 TTFS = $(patsubst %.ufo,%.ttf,$(notdir $(wildcard $(font_ufodir)/*.ufo)))
 if HAVE_INSTALLDIR
@@ -14,6 +15,11 @@ else
 noinst_DATA = $(TTFS)
 endif # HAVE_INSTALLDIR
 endif # HAVE_FONT_UFODIR
+
+
+#
+# Build targets
+#
 
 export PYTHONUSERBASE
 deps/bin/fontmake:
@@ -25,13 +31,36 @@ master_ttf/%.ttf: $(font_ufodir)/%.ufo $(FONTMAKE)
 %.ttf: master_ttf/%.ttf
 	cp $< $@
 
+
+#
+# Clean targets
+#
+
 clean-local:
 	-rm -rf master_ttf *.ttf
 
 distclean-local:
 	-rm -rf deps
 
+
+#
+# Distribution targets
+#
+
+# Override the `make dist` artifacts if we're managing a font project
+if HAVE_FONT_UFODIR
+mydistdir = $(source_typeface_family_lc)-$(source_typeface_version)
+else
+mydistdir = $(PACKAGE)-$(VERSION)
+endif
+distdir = $(mydistdir)
+
 EXTRA_DIST = GNUmakefile LICENSE README.md test tools
 
 dist-hook:
 	$(MAKE) -C $(distdir)/test distclean
+if HAVE_FONT_UFODIR
+	mkdir $(distdir)/autofont
+	mv -f $(filter-out autofont,$(wildcard $(distdir)/*)) $(distdir)/autofont
+	cp -a $(filter-out autofont,$(wildcard $(font_srcdir)/*)) $(distdir)
+endif
