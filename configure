@@ -589,6 +589,7 @@ LIBOBJS
 HAVE_INSTALLDIR_FALSE
 HAVE_INSTALLDIR_TRUE
 installdir
+source_typeface_version
 source_typeface_family_lc
 source_typeface_family
 HAVE_PYMOD_UFOLIB
@@ -2482,7 +2483,7 @@ fi
 if test "${enable_build_dependencies+set}" = set; then :
   enableval=$enable_build_dependencies; if test "x$enableval" = xyes; then :
   build_dependencies='true'
-                      PYTHONUSERBASE=deps
+                      PYTHONUSERBASE=`pwd`/deps
 
                       export PYTHONUSERBASE
 fi
@@ -2833,6 +2834,17 @@ source_typeface_family=$source_typeface_family
 # Transform 'Font Name' -> 'font-name', for use in unix style directory names.
 source_typeface_family_lc="`echo "$source_typeface_family" | tr 'A-Z ' 'a-z-'`"
 source_typeface_family_lc=$source_typeface_family_lc
+
+
+# Detect the typeface version from the UFO sources.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for the source typeface version" >&5
+$as_echo_n "checking for the source typeface version... " >&6; }
+source_typeface_version_major="`"$PYTHON" "${srcdir}/tools/typeface-property.py" versionMajor "$font_ufodir"/*.ufo 2>&5`"
+source_typeface_version_minor="`"$PYTHON" "${srcdir}/tools/typeface-property.py" versionMinor "$font_ufodir"/*.ufo 2>&5`"
+source_typeface_version="`printf '%d.%03d' "$source_typeface_version_major" "$source_typeface_version_minor"`"
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $source_typeface_version" >&5
+$as_echo "$source_typeface_version" >&6; }
+source_typeface_version=$source_typeface_version
 
 
 

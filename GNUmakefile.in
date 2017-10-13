@@ -151,7 +151,6 @@ am__installdirs = "$(DESTDIR)$(installdir)"
 DATA = $(install_DATA) $(noinst_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
 am__remove_distdir = \
   if test -d "$(distdir)"; then \
@@ -252,15 +251,27 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 source_typeface_family = @source_typeface_family@
 source_typeface_family_lc = @source_typeface_family_lc@
+source_typeface_version = @source_typeface_version@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+
+# Define what to build and where to install it based on configuration
 @HAVE_FONT_UFODIR_TRUE@TTFS = $(patsubst %.ufo,%.ttf,$(notdir $(wildcard $(font_ufodir)/*.ufo)))
 @HAVE_FONT_UFODIR_TRUE@@HAVE_INSTALLDIR_TRUE@install_DATA = $(TTFS)
 @HAVE_FONT_UFODIR_TRUE@@HAVE_INSTALLDIR_FALSE@noinst_DATA = $(TTFS)
+@HAVE_FONT_UFODIR_FALSE@mydistdir = $(PACKAGE)-$(VERSION)
+
+#
+# Distribution targets
+#
+
+# Override the `make dist` artifacts if we're managing a font project
+@HAVE_FONT_UFODIR_TRUE@mydistdir = $(source_typeface_family_lc)-$(source_typeface_version)
+distdir = $(mydistdir)
 EXTRA_DIST = GNUmakefile LICENSE README.md test tools
 all: all-am
 
@@ -534,7 +545,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -604,9 +615,9 @@ uninstall-am: uninstall-installDATA
 .MAKE: install-am install-strip
 
 .PHONY: all all-am am--refresh check check-am clean clean-generic \
-	cscopelist-am ctags-am dist dist-all dist-bzip2 dist-gzip \
-	dist-hook dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-generic distclean-local \
+	clean-local cscopelist-am ctags-am dist dist-all dist-bzip2 \
+	dist-gzip dist-hook dist-lzip dist-shar dist-tarZ dist-xz \
+	dist-zip distcheck distclean distclean-generic distclean-local \
 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
@@ -619,6 +630,10 @@ uninstall-am: uninstall-installDATA
 	uninstall-installDATA
 
 
+#
+# Build targets
+#
+
 export PYTHONUSERBASE
 deps/bin/fontmake:
 	$(PYTHON) -m pip install --user fontmake
@@ -629,11 +644,21 @@ master_ttf/%.ttf: $(font_ufodir)/%.ufo $(FONTMAKE)
 %.ttf: master_ttf/%.ttf
 	cp $< $@
 
+#
+# Clean targets
+#
+
+clean-local:
+	-rm -rf master_ttf *.ttf
+
 distclean-local:
 	-rm -rf deps
 
 dist-hook:
 	$(MAKE) -C $(distdir)/test distclean
+@HAVE_FONT_UFODIR_TRUE@	mkdir $(distdir)/autofont
+@HAVE_FONT_UFODIR_TRUE@	mv -f $(filter-out autofont,$(wildcard $(distdir)/*)) $(distdir)/autofont
+@HAVE_FONT_UFODIR_TRUE@	cp -a $(filter-out autofont,$(wildcard $(font_srcdir)/*)) $(distdir)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
