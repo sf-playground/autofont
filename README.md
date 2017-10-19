@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/source-foundry/autofont.svg?branch=dev)](https://travis-ci.org/source-foundry/autofont)
+[![Build Status](https://travis-ci.org/source-foundry/autofont.svg?branch=master)](https://travis-ci.org/source-foundry/autofont)
 
 # ![Autofont](autofont.svg "Autofont Logo")
 
@@ -43,9 +43,9 @@ archive](https://github.com/source-foundry/autofont/releases) and unpack it
 into your porject.
 
 Autofont expects to live in a directory in the root of your project.  The
-directory can be anything (e.g. `autofont`, `tools`, `build`).  The UFO files
-should either be in the project root, or a directory called `src` or `source`,
-to be automatically detected.
+directory can be named anything (e.g. `autofont`, `tools`, `build`).  The UFO
+files should either be in the project root, or a directory called `src` or
+`source`, to be automatically detected.
 
 To update your copy of Autofont as a subtree, run:
 
