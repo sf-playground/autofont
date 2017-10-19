@@ -1,5 +1,5 @@
 dnl
-dnl autofont -- configure.ac
+dnl Autofont -- configure.ac
 dnl Copyright (C) 2017 James T. Lee
 dnl
 dnl This software may be modified and distributed under the terms

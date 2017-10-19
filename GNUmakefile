@@ -1,5 +1,5 @@
 #
-# autofont -- Pre-configure Makefile
+# Autofont -- Pre-configure Makefile
 # Copyright (C) 2017 James T. Lee
 #
 # This software may be modified and distributed under the terms
