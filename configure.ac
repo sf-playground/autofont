@@ -98,6 +98,18 @@ AM_CONDITIONAL([HAVE_FONT_UFODIR], [test "x$font_ufodir" != x])
 #
 AS_IF([test "x$font_ufodir" != x], [
 
+# Allow the ttfautohinting strategy to be set by the user.
+AC_ARG_WITH([hints],
+            [AS_HELP_STRING([--with-hints=STRATEGY],
+                            [the amount of hinting to apply to the TTFs
+                             [`default`, `minimal`, or `none`]])],
+            [AS_CASE([$withval],
+                     [yes|default], [hints='default'],
+                     [no|none],     [hints='none'],
+                     [minimal],     [hints='minimal'],
+                     [AC_MSG_ERROR([invalid hints setting: $withval])])],
+            [hints='default'])
+
 # Allow the path to `fontmake` to be set from an environment variable.
 AS_IF([test "x$FONTMAKE" = x], [FONTMAKE=fontmake])
 AS_IF([AS_EXECUTABLE_P([$FONTMAKE])],
@@ -123,6 +135,23 @@ AS_IF([AS_EXECUTABLE_P([$PYTHON])],
 AS_IF([test "x$PYTHON" = x],
       [AC_MSG_ERROR([could not find python])])
 AC_ARG_VAR([PYTHON], [the python name or path to build with])
+
+# Allow the path to `ttfautohint` to be set from an environment variable (when
+# hinting is requested).
+AS_IF([test "x$hints" != xnone], [
+    AS_IF([test "x$TTFAUTOHINT" = x], [TTFAUTOHINT=ttfautohint])
+    AS_IF([AS_EXECUTABLE_P([$TTFAUTOHINT])],
+          [AC_MSG_NOTICE([using ttfautohint '$TTFAUTOHINT'])],
+          [requested_ttfautohint="$TTFAUTOHINT"
+           AS_UNSET([TTFAUTOHINT])
+           AC_PATH_PROG([TTFAUTOHINT], [$requested_ttfautohint])])
+    AS_IF([test "x$TTFAUTOHINT" = x],
+          [AS_IF([test "x$build_dependencies" = xtrue],
+                 [AC_MSG_NOTICE([ttfautohint will be compiled at make time])
+                  TTFAUTOHINT=deps/bin/ttfautohint],
+                 [AC_MSG_ERROR([could not find ttfautohint])])])
+    AC_ARG_VAR([TTFAUTOHINT], [the ttfautohint name or path to build with])
+])
 
 # Check for ufoLib.  This will be used by configure to read the source font
 # information and make configuration-time decisions based on it.  Thus, it is
@@ -174,6 +203,11 @@ AC_MSG_RESULT([$source_typeface_version])
 AC_SUBST([source_typeface_version], [$source_typeface_version])
 
 ]) # AS_IF([test "x$ufo_dir" != x])
+
+# Generate automake conditionals from the AS_IF block above (AM_CONDITIONALS
+# cannot exist in an AS_IF block).
+AM_CONDITIONAL([HINTS],         [test "x$hints" != xnone])
+AM_CONDITIONAL([HINTS_MINIMAL], [test "x$hints" = xminimal])
 
 # Expose a configure argument to set the font installation directory or disable
 # installation.  If unspecified, try to choose a reasonable default based on

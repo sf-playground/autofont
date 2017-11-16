@@ -62,8 +62,26 @@ A typical build looks like:
 * `--with-installdir=DIR`: The directory where the compiled font should be
   installed when running `gmake install`.  The configure script attempts to
   detect the correct installation directory based on your operating system.
+* `--with-hints=STRATEGY`: Controls whether, and to what degree, autohinting is
+  applied to the resulting TTFs.  This option takes one of the following
+  values:
+  - `default`: Apply the hinting strategy used by the typeface designers.
+  - `minimal`: Apply hints without x-height resizing.
+  - `none`: Do not apply hints at all.
 
 *more to come...*
+
+### `configure` Environment Variables
+
+* `FONTMAKE`, `PYTHON`, `TTFAUTOHINT`: Each of these variables behaves the same
+  and are used to set the name or full path of the `fontmake`, `python`, and
+  `ttfautohint` executable, respectively.  If left unspecified, and it is
+  required by the build, `configure` will search your `PATH` for the
+  executable.  In the case of `fontmake` and `ttfautohint`, if it is still not
+  found, and you have enabled the `configure` option
+  `--enable-build-dependencies`, then the programs will be compiled and
+  installed at build time, local to your build environment.
+
 
 ### `gmake` Targets
 

@@ -26,10 +26,11 @@ fi
 # Establish expectations
 expected_config_log_message='failed to find required module ufoLib'
 
-# Prevent error on missing fontmake--that's not what were testing here
+# Prevent error on missing fontmake and ttfautohint--that's not what were
+# testing here
 mkdir bin
-touch bin/fontmake
-chmod +x bin/fontmake
+touch bin/fontmake bin/ttfautohint
+chmod +x bin/fontmake bin/ttfautohint
 export PATH="bin:${PATH}"
 
 # Perform the action under test

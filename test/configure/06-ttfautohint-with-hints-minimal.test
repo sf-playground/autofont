@@ -1,0 +1,36 @@
+#
+# Autofont -- ttfautohint --with-hints=minimal
+# Copyright (C) 2017 James T. Lee
+#
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+#
+# When the `--with-hints=minimal` configure option is specified, the
+# HINTS_MINIMAL Automake conditional should be set and TTFAUTOHINT such a way
+# as to trigger make to build it.
+#
+
+# Include a set of common test functions
+source "$HELPERS"
+
+# Establish expectations
+expected_ttfautohint='deps/bin/ttfautohint'
+expected_hints_true=''
+expected_hints_false='#'
+expected_hints_minimal_true=''
+expected_hints_minimal_false='#'
+
+# Perform the action under test
+configure_with_fixtures_and_build_deps --with-hints=minimal
+
+# Read the results
+source "$RESULTS"
+
+# Validate the expectations
+[[ $TTFAUTOHINT == $expected_ttfautohint &&
+   $HINTS_TRUE  == $expected_hints_true &&
+   $HINTS_FALSE == $expected_hints_false &&
+   $HINTS_MINIMAL_TRUE  == $expected_hints_minimal_true &&
+   $HINTS_MINIMAL_FALSE == $expected_hints_minimal_false ]]
+
+# vi: ft=sh
